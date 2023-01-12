@@ -32,25 +32,41 @@
 
 //Functions----------------------------------------------------
 
-//stream availability api fetch function
+//streaming availability api fetch function
+//add seach limit protection so we dont go over 50 per day
+//API Key: 95154b8a57msha4e5c1348b5f178p1d6f1ejsn62dcb59bc28f
 function getUserQuery(input){
 
 }
 
-//imdb api fetch function
+//display search results in rows 4 columns wide
+function searchResults(array){
+
+}
+
+//tmdb api fetch function
+//API Key: 6dfaf479fdab952fa3b31ec64f199ba7
 function  getTopTen(){
 
 }
 
 //place carousel card items in carousel
-function populateCarousel(array)
-
-//Launch modal for title information
-function titleDetails(title){
+function populateCarousel(array){
 
 }
 
-//save buttonfunction
-function updateWatchList(title){
+
+//Launch modal for title information
+function titleDetails(element){
+
+}
+
+//save button function
+function updateWatchList(element){
+
+}
+
+//open watch list modal
+function launchWatchList(){
 
 }
