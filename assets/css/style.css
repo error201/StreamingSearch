@@ -1,0 +1,5 @@
+.card {
+    max-width: 20em;
+    min-height: 30em;
+    background-size: contain;
+}
