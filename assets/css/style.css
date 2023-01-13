@@ -2,4 +2,8 @@
     max-width: 20em;
     min-height: 30em;
     background-size: contain;
+
+#logo {
+    width: 75px;
+    height: 75px;;
 }

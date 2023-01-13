@@ -24,9 +24,14 @@
 $ (function(){
 //Global Variables---------------------------------------------
 var tmdbApiKey = "241112bdd32fa526246d8de7ad741118";
+<<<<<<< HEAD
 var top10Tv = {};
 var top10Movies = {};
 var movieCarousel = $('#movie-carousel')
+=======
+var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
+
+>>>>>>> 820a7234515b6a5934c51ddf9c2d149e2d16d3a8
 
 
 var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
@@ -76,6 +81,18 @@ function getTopTenMovie() {
         });
 };
 
+// Youtube api fetch function
+function getYoutubeTrailers(searchKeyword) {
+    var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}part=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
+    fetch(youTubeApiUrl)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            console.log(data);
+        });
+};
+
 //place carousel card items in carousel
 function populateCarousel(array) {
     //cut results down to the 10 top rated movies
@@ -120,6 +137,11 @@ function updateWatchList(element) {
 //open watch list modal
 function launchWatchList() {
 
+
 }
 
+<<<<<<< HEAD
 });
+=======
+getYoutubeTrailers('They Live movie trailer');
+>>>>>>> 820a7234515b6a5934c51ddf9c2d149e2d16d3a8
