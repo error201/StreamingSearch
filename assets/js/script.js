@@ -100,4 +100,7 @@ function updateWatchList(element) {
 //open watch list modal
 function launchWatchList() {
 
+
 }
+
+getYoutubeTrailers('They Live movie trailer');
