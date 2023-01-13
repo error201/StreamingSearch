@@ -22,8 +22,8 @@
 
 //Global Variables---------------------------------------------
 var tmdbApiKey = "241112bdd32fa526246d8de7ad741118";
-var top10Tv = {};
-var top10Movies = {};
+var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
+
 
 
 
@@ -69,6 +69,18 @@ function getTopTenMovie() {
         });
 };
 
+// Youtube api fetch function
+function getYoutubeTrailers(searchKeyword) {
+    var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}part=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
+    fetch(youTubeApiUrl)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            console.log(data);
+        });
+};
+
 //place carousel card items in carousel
 function populateCarousel(array) {
 
@@ -89,3 +101,5 @@ function updateWatchList(element) {
 function launchWatchList() {
 
 }
+
+getYoutubeTrailers('They Live movie trailer');
