@@ -20,15 +20,27 @@
 //1. Have watch list modal appear upon clicking watch list button.
 //a. location of watch-list button needs to be determined.
 
+
+$ (function(){
 //Global Variables---------------------------------------------
 var tmdbApiKey = "241112bdd32fa526246d8de7ad741118";
+<<<<<<< HEAD
+var top10Tv = {};
+var top10Movies = {};
+var movieCarousel = $('#movie-carousel')
+=======
 var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
 
+>>>>>>> 820a7234515b6a5934c51ddf9c2d149e2d16d3a8
 
 
+var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
+populateCarousel(topTenMovies);
 
-//Event Listeners----------------------------------------------
-
+//Event Listeners---------------------------------------------
+$(document).ready(function(){
+    $('.carousel').carousel();
+});
 
 
 
@@ -65,7 +77,7 @@ function getTopTenMovie() {
             return response.json();
         })
         .then(function (data) {
-            console.log(data);
+
         });
 };
 
@@ -83,6 +95,31 @@ function getYoutubeTrailers(searchKeyword) {
 
 //place carousel card items in carousel
 function populateCarousel(array) {
+    //cut results down to the 10 top rated movies
+    var results = array.results;
+    results.sort(function(a, b){return b.popularity - a.popularity});
+    topRatedMovies = results.slice(0, 10);
+    console.log(topRatedMovies);
+
+    for (let i = 0; i < topRatedMovies.length; i++) {
+        var element = topRatedMovies[i];
+        
+        var card = $('<div class="carousel-item card">');
+        card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.poster_path})`);
+        
+        var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
+        
+        var cardSave = $('<button class="waves-effect waves-light btn grey darken-2">');
+
+        cardTitle.text(element.title);
+        cardSave.text('Add +');
+
+        card.append(cardTitle);
+        card.append(cardSave);
+        movieCarousel.append(card);
+        console.log(card);
+    }
+
 
 }
 
@@ -103,4 +140,8 @@ function launchWatchList() {
 
 }
 
+<<<<<<< HEAD
+});
+=======
 getYoutubeTrailers('They Live movie trailer');
+>>>>>>> 820a7234515b6a5934c51ddf9c2d149e2d16d3a8
