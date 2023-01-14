@@ -22,126 +22,123 @@
 
 
 $ (function(){
-//Global Variables---------------------------------------------
-var tmdbApiKey = "241112bdd32fa526246d8de7ad741118";
-<<<<<<< HEAD
-var top10Tv = {};
-var top10Movies = {};
-var movieCarousel = $('#movie-carousel')
-=======
-var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
+    //Global Variables---------------------------------------------
+    var tmdbApiKey = "241112bdd32fa526246d8de7ad741118";
+    var top10Tv = {};
+    var movieCarousel = $('#movie-carousel')
+    var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
 
->>>>>>> 820a7234515b6a5934c51ddf9c2d149e2d16d3a8
-
-
-var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
-populateCarousel(topTenMovies);
-
-//Event Listeners---------------------------------------------
-$(document).ready(function(){
-    $('.carousel').carousel();
-});
-
-
-
-//Functions----------------------------------------------------
-
-//streaming availability api fetch function
-//add seach limit protection so we dont go over 50 per day
-//API Key: 95154b8a57msha4e5c1348b5f178p1d6f1ejsn62dcb59bc28f
-function getUserQuery(input) {
-
-}
-
-//display search results in rows 4 columns wide
-function searchResults(array) {
-
-}
-
-// TMDB api fetch function
-function getTopTenTv() {
-    var trendingTvUrl = `https://api.themoviedb.org/3/trending/tv/week?api_key=${tmdbApiKey}`
-    fetch(trendingTvUrl)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            console.log(data);
-        });
-};
-
-function getTopTenMovie() {
-    var trendingMovieUrl = `https://api.themoviedb.org/3/trending/movie/week?api_key=${tmdbApiKey}`
-    fetch(trendingMovieUrl)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-
-        });
-};
-
-// Youtube api fetch function
-function getYoutubeTrailers(searchKeyword) {
-    var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}part=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
-    fetch(youTubeApiUrl)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            console.log(data);
-        });
-};
-
-//place carousel card items in carousel
-function populateCarousel(array) {
-    //cut results down to the 10 top rated movies
-    var results = array.results;
-    results.sort(function(a, b){return b.popularity - a.popularity});
-    topRatedMovies = results.slice(0, 10);
-    console.log(topRatedMovies);
-
-    for (let i = 0; i < topRatedMovies.length; i++) {
-        var element = topRatedMovies[i];
-        
-        var card = $('<div class="carousel-item card">');
-        card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.poster_path})`);
-        
-        var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
-        
-        var cardSave = $('<button class="waves-effect waves-light btn grey darken-2">');
-
-        cardTitle.text(element.title);
-        cardSave.text('Add +');
-
-        card.append(cardTitle);
-        card.append(cardSave);
-        movieCarousel.append(card);
-        console.log(card);
+    getTopTenMovie();
+    var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
+    populateCarousel(topTenMovies);
+    
+    //Event Listeners---------------------------------------------
+    $(document).ready(function(){
+        $('.carousel').carousel();
+    });
+    
+    
+    
+    //Functions----------------------------------------------------
+    
+    //streaming availability api fetch function
+    //add seach limit protection so we dont go over 50 per day
+    //API Key: 95154b8a57msha4e5c1348b5f178p1d6f1ejsn62dcb59bc28f
+    function getUserQuery(input) {
+    
     }
+    
+    //display search results in rows 4 columns wide
+    function searchResults(array) {
+    
+    }
+    
+    // TMDB api fetch function
+    function getTopTenTv() {
+        var trendingTvUrl = `https://api.themoviedb.org/3/trending/tv/week?api_key=${tmdbApiKey}`
+        fetch(trendingTvUrl)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                console.log(data);
+            });
+    };
+    
+    function getTopTenMovie() {
+        var trendingMovieUrl = `https://api.themoviedb.org/3/trending/movie/week?api_key=${tmdbApiKey}`
+        fetch(trendingMovieUrl)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                console.log(data);
+                localStorage.setItem('topTenMovies', JSON.stringify(data));
+            });
+    };
+    
+    // Youtube api fetch function
+    function getYoutubeTrailers(searchKeyword) {
+        var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}part=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
+        fetch(youTubeApiUrl)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                console.log(data);
+            });
+    };
+    
+    //place carousel card items in carousel
+    function populateCarousel(array) {
+        //cut results down to the 10 top rated movies
+        var results = array.results;
+        results.sort(function(a, b){return b.popularity - a.popularity});
+        topRatedMovies = results.slice(0, 10);
+        console.log(topRatedMovies);
+    
+        for (let i = 0; i < topRatedMovies.length; i++) {
+            var element = topRatedMovies[i];
+            
+            var card = $('<div class="carousel-item card">');
+            card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.poster_path})`);
+            
+            var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
+            
+            var cardSave = $('<button class="waves-effect waves-light btn grey darken-2">');
+    
+            cardTitle.text(element.title);
+            cardSave.text('Add +');
+    
+            card.append(cardTitle);
+            card.append(cardSave);
+            movieCarousel.append(card);
+        }
+    
+    
+    }
+    
+    
+    //Launch modal for title information
+    function titleDetails(element) {
+    
+    }
+    
+    //save button function
+    function updateWatchList(element) {
+    
+    }
+    
+    //open watch list modal
+    function launchWatchList() {
+    
+    
+    }
+    
+    getYoutubeTrailers('They Live movie trailer');
+
+    });
 
 
-}
 
-
-//Launch modal for title information
-function titleDetails(element) {
-
-}
-
-//save button function
-function updateWatchList(element) {
-
-}
-
-//open watch list modal
-function launchWatchList() {
-
-
-}
-
-<<<<<<< HEAD
-});
-=======
-getYoutubeTrailers('They Live movie trailer');
->>>>>>> 820a7234515b6a5934c51ddf9c2d149e2d16d3a8
+    
