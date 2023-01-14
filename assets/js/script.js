@@ -27,7 +27,7 @@ $ (function(){
     var top10Tv = {};
     var movieCarousel = $('#movie-carousel')
     var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
-
+    var onScreenObjects = [];
     getTopTenMovie();
     var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
     populateCarousel(topTenMovies);
@@ -101,25 +101,39 @@ $ (function(){
         //cut results down to the 10 top rated movies
         var results = array.results;
         results.sort(function(a, b){return b.popularity - a.popularity});
-        topRatedMovies = results.slice(0, 10);
-        console.log(topRatedMovies);
+        var topRated = results.slice(0, 10);
     
-        for (let i = 0; i < topRatedMovies.length; i++) {
-            var element = topRatedMovies[i];
-            
+        for (let i = 0; i < topRated.length; i++) {
+            var element = topRated[i];
+            //create and add title object to array for use in modals and save features
+            var cardObj = {
+                title: element.title,
+                genres: element.genre_ids,
+                media: element.media_type,
+                release: element.release_date,
+                popularity: element.popularity,
+                poster: element.poster_path,
+                backdrop: element.backdrop_path
+            }
+            onScreenObjects.push(cardObj);
+
+            //establish card keys for use in modal and saving
             var card = $('<div class="carousel-item card">');
-            card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.poster_path})`);
+            card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
             
+            //title card, needs to appear on bottom
             var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
-            
-            var cardSave = $('<button class="waves-effect waves-light btn grey darken-2">');
-    
-            cardTitle.text(element.title);
-            cardSave.text('Add +');
-    
+            cardTitle.text(cardObj.title);
             card.append(cardTitle);
+
+            //save button should be on right side of title card, floating.
+            var cardSave = $('<button class="waves-effect waves-light btn grey darken-2">');
+            //save data from fetch in object array for use in modals and save feature
+            cardSave.text('Add +');
             card.append(cardSave);
+
             movieCarousel.append(card);
+
         }
     
     
@@ -128,8 +142,18 @@ $ (function(){
     
     //Launch modal for title information
     function titleDetails(element) {
-        console.log(topTenMovies.find(element));
+        console.log(element);
+        var openedTitle = onScreenObjects.find(obj => obj.title === element);
+        var modal = $('<div class="modal">');
+        var modalContent = $('<div class="modal-content">');
+        var modalHeader = $('<h4 class="modal-header">');
+        var modalInfo = $('<p class="modal-info">');
+        var modalDescription = $('<p class="modal-description">');
+        var modalTrailer = $('<div class="modal-trailer">');
+        var modalFooter = $('<p class="modal-footer">');
         
+        modalHeader.text(openedTitle.title);
+        modalInfo.text(openedTitle.release)
     }
     
     //save button function
