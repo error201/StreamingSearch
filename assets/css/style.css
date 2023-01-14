@@ -1,7 +1,8 @@
 .card {
+    max-height: 30em;
     max-width: 20em;
-    min-height: 30em;
-    background-size: contain;
+    background-size: cover;
+}
 
 #logo {
     width: 75px;
