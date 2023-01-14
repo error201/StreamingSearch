@@ -34,10 +34,17 @@ $ (function(){
     
     //Event Listeners---------------------------------------------
     $(document).ready(function(){
-        $('.carousel').carousel();
+        //need to come to agreement on carousel functionality
+        $('.carousel').carousel({
+            padding: 10,
+            dist: -10
+        });
+        $('.modal').modal();
     });
     
-    
+    $('.card').on('click', function(){
+        titleDetails($(this).children('.card-title').text());
+    });
     
     //Functions----------------------------------------------------
     
@@ -121,7 +128,8 @@ $ (function(){
     
     //Launch modal for title information
     function titleDetails(element) {
-    
+        console.log(topTenMovies.find(element));
+        
     }
     
     //save button function
