@@ -4,6 +4,12 @@
     max-width: 16em;
     max-height: 8.9em;
     background-size: contain;
+}
+
+#description-modal {
+    width: 80vw;
+    min-height: 80vh;
+}
 
 #logo {
     width: 75px;
