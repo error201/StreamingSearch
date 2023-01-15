@@ -23,21 +23,29 @@
 
 $ (function(){
     //Global Variables---------------------------------------------
+    var pageEl = $('body');
     var tmdbApiKey = "241112bdd32fa526246d8de7ad741118";
     var top10Tv = {};
     var movieCarousel = $('#movie-carousel')
     var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
-
+    var onScreenObjects = [];
     getTopTenMovie();
     var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
     populateCarousel(topTenMovies);
     
     //Event Listeners---------------------------------------------
     $(document).ready(function(){
-        $('.carousel').carousel();
+        //need to come to agreement on carousel functionality
+        $('.carousel').carousel({
+            padding: 10,
+            dist: -10
+        });
+        $('.modal').modal();
     });
     
-    
+    $('.card').on('click', function(){
+        titleDetails($(this).children('.card-title').text());
+    });
     
     //Functions----------------------------------------------------
     
@@ -67,26 +75,31 @@ $ (function(){
     
     function getTopTenMovie() {
         var trendingMovieUrl = `https://api.themoviedb.org/3/trending/movie/week?api_key=${tmdbApiKey}`
-        fetch(trendingMovieUrl)
+        return fetch(trendingMovieUrl)
             .then(function (response) {
                 return response.json();
             })
             .then(function (data) {
-                console.log(data);
                 localStorage.setItem('topTenMovies', JSON.stringify(data));
             });
     };
     
     // Youtube api fetch function
-    function getYoutubeTrailers(searchKeyword) {
-        var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}part=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
-        fetch(youTubeApiUrl)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                console.log(data);
-            });
+    async function getYoutubeTrailers(searchKeyword) {
+        // console.log(searchKeyword);
+        // var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}%previewpart=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
+        
+        // var test = await fetch(youTubeApiUrl)
+        //     .then(function (response) {
+        //         return response.json();
+        //     })
+        //     .then(function (data) {
+        //         console.log(data);
+        //         console.log(data.items[0].id.videoId);
+        //         return data.items[0].id.videoId;
+        //     });
+        // return test;
+        return '-XwSmZ5n_J4';
     };
     
     //place carousel card items in carousel
@@ -94,25 +107,40 @@ $ (function(){
         //cut results down to the 10 top rated movies
         var results = array.results;
         results.sort(function(a, b){return b.popularity - a.popularity});
-        topRatedMovies = results.slice(0, 10);
-        console.log(topRatedMovies);
+        var topRated = results.slice(0, 10);
     
-        for (let i = 0; i < topRatedMovies.length; i++) {
-            var element = topRatedMovies[i];
+        for (let i = 0; i < topRated.length; i++) {
+            var element = topRated[i];
+            //create and add title object to array for use in modals and save features
+            var cardObj = {
+                title: element.title,
+                genres: element.genre_ids,
+                media: element.media_type,
+                release: element.release_date,
+                description: element.overview,
+                popularity: element.vote_average,
+                poster: element.poster_path,
+                backdrop: element.backdrop_path
+            }
+            onScreenObjects.push(cardObj);
+
+            //establish card keys for use in modal and saving
+            var card = $('<div class="carousel-item card modal-trigger" data-target="description-modal">');
+            card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
             
-            var card = $('<div class="carousel-item card">');
-            card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.poster_path})`);
-            
+            //title card, needs to appear on bottom
             var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
-            
-            var cardSave = $('<button class="waves-effect waves-light btn grey darken-2">');
-    
-            cardTitle.text(element.title);
-            cardSave.text('Add +');
-    
+            cardTitle.text(cardObj.title);
             card.append(cardTitle);
+
+            //save button should be on right side of title card, floating.
+            var cardSave = $('<button class="save-button waves-effect waves-light btn grey darken-2">');
+            //save data from fetch in object array for use in modals and save feature
+            cardSave.text('Add +');
             card.append(cardSave);
+
             movieCarousel.append(card);
+
         }
     
     
@@ -120,8 +148,28 @@ $ (function(){
     
     
     //Launch modal for title information
-    function titleDetails(element) {
-    
+    async function titleDetails(element) {
+        var openedTitle = onScreenObjects.find(obj => obj.title === element);
+        var genre = getGenre(openedTitle.genres[0]);
+        var streamingServices = getStreamingService(openedTitle.title);
+        //getting the trailer into modal using async functions.
+        //can propably be written better but it works so were keeping it as is for now.
+        async function getUrl(){
+            returnedUrl = await getYoutubeTrailers(openedTitle.title).then(url => {
+                return url;
+            })
+            return returnedUrl;
+        }
+        youTubeUrl = 'https://www.youtube.com/embed/' + await getUrl();
+        
+        //fill modal contents
+        $('.modal-title').text(openedTitle.title);
+        $('.modal-info').text(openedTitle.release + ' ' + genre + ' ' + ((Math.round(openedTitle.popularity)*10) + '%'));
+        $('.modal-description').text(openedTitle.description);
+        $('.modal-trailer').attr('src', `${youTubeUrl}`);
+        $('.modal-services').text(streamingServices);
+        $('.modal-save').text('Add +');
+
     }
     
     //save button function
@@ -134,9 +182,15 @@ $ (function(){
     
     
     }
-    
-    getYoutubeTrailers('They Live movie trailer');
 
+    function getGenre() {
+
+    }
+
+    function getStreamingService() {
+
+    }
+    
     });
 
 

@@ -1,7 +1,14 @@
 .card {
-    max-height: 30em;
-    max-width: 20em;
-    background-size: cover;
+    min-width: 16em;
+    min-height: 8.9em;
+    max-width: 16em;
+    max-height: 8.9em;
+    background-size: contain;
+}
+
+#description-modal {
+    width: 80vw;
+    min-height: 80vh;
 }
 
 #logo {
