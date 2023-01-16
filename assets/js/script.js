@@ -32,6 +32,9 @@ $ (function(){
     getTopTenMovie();
     var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
     populateCarousel(topTenMovies);
+    var watchList = JSON.parse(localStorage.getItem('watchList'));
+    console.log(watchList)
+
     
     //Event Listeners---------------------------------------------
     $(document).ready(function(){
@@ -46,6 +49,10 @@ $ (function(){
     $('.card').on('click', function(){
         titleDetails($(this).children('.card-title').text());
     });
+    $('body').on('click', '.save-button', function(){
+        updateWatchList($(this).parent().parent().children(".modal-header").children(".modal-title").text());
+        console.log($(this).parent().parent().children(".modal-header").children(".modal-title").text())
+    })
     
     //Functions----------------------------------------------------
     
@@ -174,8 +181,39 @@ $ (function(){
     
     //save button function
     function updateWatchList(element) {
+        var savedTitle = onScreenObjects.find(obj => obj.title === element);
+        if(watchList === null) {
+            watchList = [];
+        }
     
+        var duplicate = false
+        var duplicateIndex = 0
+        for (let i = 0; i < watchList.length; i++) {
+            const element = watchList[i];
+            if(element.title === savedTitle.title) {
+                duplicate = true
+                duplicateIndex = i
+            }
+        }
+        //Duplicate save
+        if(duplicate === false) {
+            watchList.push(savedTitle)
+            localStorage.setItem('watchList', JSON.stringify(watchList))
+        }
+        else{
+        //Move duplicate title to front of index
+            watchList.splice(duplicateIndex, 1);
+            watchList.unshift(savedTitle);
+        }
+
+
+
     }
+
+    
+
+    
+    
     
     //open watch list modal
     function launchWatchList() {
@@ -191,7 +229,7 @@ $ (function(){
 
     }
     
-    });
+});
 
 
 
