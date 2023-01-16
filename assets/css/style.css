@@ -6,7 +6,18 @@
     background-size: contain;
 }
 
+.watch-list-main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
 #description-modal {
+    width: 80vw;
+    min-height: 80vh;
+}
+
+#watch-list-modal {
     width: 80vw;
     min-height: 80vh;
 }

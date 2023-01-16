@@ -21,9 +21,9 @@
     <!-- Modals -->
     <div id="description-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header center-align">
-                <h3 class="modal-title row"></h3>
-                <p class="modal-info row">test</p>
+            <div class="modal-header row center-align">
+                <h3 class="modal-title"></h3>
+                <p class="modal-info"></p>
             </div>
             <div class="modal-main row">
                 <p class="modal-description col s5"></p>
@@ -35,12 +35,25 @@
             </div>
         </div>
     </div>
+
+    <div id="watch-list-modal" class="modal">
+        <div class="watch-list-content">
+            <div class="watch-list-header row center-align">
+                <h3 class="watch-list-title"></h3>
+            </div>
+            <div class="watch-list-main row">
+            </div>
+            <div class="watch-list-footer row center-align">
+                <p class="watch-list-sort">sort</p>
+            </div>
+        </div>
+    </div>
     <!-- Main Code -->
     <header id="header" class="row section grey darken-4 center-align">
         <div class="col s12 valign-wrapper">
         <h1 id="site-name" class="col s8 left-align">Heading
         </h1>
-        <button class="watch-list-button col s4 right-align waves-effect waves-light btn-flat grey-text text-lighten-4">Watch List</button>
+        <button class="watch-list-button col s4 right-align waves-effect waves-light btn-flat grey-text text-lighten-4 modal-trigger" data-target="watch-list-modal">Watch List</button>
         </div>
         
         <div id="search-div" class="col s12">
