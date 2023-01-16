@@ -46,7 +46,7 @@ $ (function(){
         $('.modal').modal();
     });
     
-    //updated eventlistener to listen for any decendent of body that was a card to resolve the issue that the watch list cards weren't present onload
+    //updated eventlistener to listen for any decendent of body that was a card to resolve the issue that the watch list cards weren't present at the time of onload
     $('body').on('click', '.card', function(){
         console.log($(this).children('.card-title').text());
         titleDetails($(this).children('.card-title').text());
