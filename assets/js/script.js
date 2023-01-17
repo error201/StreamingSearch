@@ -155,7 +155,7 @@ $ (function(){
             card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
             
             //title card, needs to appear on bottom
-            var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
+            var cardTitle = $('<div class="card-title left-align ">')
             cardTitle.text(cardObj.title);
             card.append(cardTitle);
 
@@ -245,7 +245,7 @@ $ (function(){
         var element = watchList.results[i];
         var watchListCard = $('<div class="card modal-trigger" data-target="description-modal">');
         watchListCard.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
-        var watchListCardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
+        var watchListCardTitle = $('<div class="card-title left-align ">')
         watchListCardTitle.text(element.title);
         watchListCard.append(watchListCardTitle);
         $('.watch-list-main').append(watchListCard);
