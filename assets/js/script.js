@@ -33,7 +33,8 @@ $ (function(){
     var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
     populateCarousel(topTenMovies);
     var watchList = JSON.parse(localStorage.getItem('watchList'));
-    console.log(watchList)
+    
+    
 
     
     //Event Listeners---------------------------------------------
@@ -41,7 +42,8 @@ $ (function(){
         //need to come to agreement on carousel functionality
         $('.carousel').carousel({
             padding: 10,
-            dist: -10
+            dist: 0,
+            fullWidth: true
         });
         $('.modal').modal();
     });
@@ -49,10 +51,18 @@ $ (function(){
     $('.card').on('click', function(){
         titleDetails($(this).children('.card-title').text());
     });
+
+    $('.carousel').on('click', '.arrow', function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        moveCarousel($(this));
+    });
+
     $('body').on('click', '.save-button', function(){
         updateWatchList($(this).parent().parent().children(".modal-header").children(".modal-title").text());
         console.log($(this).parent().parent().children(".modal-header").children(".modal-title").text())
     })
+
     
     //Functions----------------------------------------------------
     
@@ -147,13 +157,17 @@ $ (function(){
             card.append(cardSave);
 
             movieCarousel.append(card);
-
         }
-    
-    
     }
     
-    
+    function moveCarousel(element){
+        if(element.hasClass('next')){
+            $('#movie-carousel').carousel('next');
+        } else if(element.hasClass('previous')){
+            $('#movie-carousel').carousel('next');
+        }
+    }
+
     //Launch modal for title information
     async function titleDetails(element) {
         var openedTitle = onScreenObjects.find(obj => obj.title === element);
@@ -209,10 +223,6 @@ $ (function(){
 
 
     }
-
-    
-
-    
     
     
     //open watch list modal

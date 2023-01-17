@@ -10,6 +10,10 @@
     <link 
         rel="stylesheet" 
         href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
     <link 
     rel="stylesheet" 
     href="./assets/css/style.css" />
@@ -51,7 +55,16 @@
         </div>
     </header>
     <main id="main-body" class="section center-align">
-        <div id="movie-carousel" class="carousel">Movie Carousel</div>
+        <div id="movie-carousel" class="carousel">
+            <div class="carousel-fixed-item center">
+                <button class="previous arrow arrow-button waves-effect waves-light">
+                    <i class="material-icons arrow-icon">chevron_left</i>
+                </button>
+                
+                <button class="next arrow arrow-button waves-effect waves-light">
+                <i class="material-icons arrow-icon">chevron_right</i>
+                </button>
+        </div>
     </main>
     <footer>
         <img id="logo" src="./assets/images/tmdb.svg" alt="The Movie Database logo">
