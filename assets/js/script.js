@@ -150,7 +150,8 @@ $ (function(){
     //Launch modal for title information
     async function titleDetails(element) {
         var openedTitle = onScreenObjects.find(obj => obj.title === element);
-        var genre = getGenre(openedTitle.genres[0]);
+        var genre = getGenre(openedTitle.genres);
+        console.log(genre)
         var streamingServices = getStreamingService(openedTitle.title);
         //getting the trailer into modal using async functions.
         //can propably be written better but it works so were keeping it as is for now.
@@ -182,16 +183,108 @@ $ (function(){
     
     
     }
+    //Create conditional logic to turn genre codes into appropriate strings
+    //Return array of strings
+    //
+    function getGenre(array) {
+        console.log(array)
+        var genreList = [];
+        for (let i = 0; i < array.length; i++) {
+            const element = array[i];
+            if(element == '28') {
+                genreList.push("Action")
+            }
+            else if(element == '12') {
+                genreList.push('Adventure')
+            }
+            else if(element == '16') {
+                genreList.push('Animation')
+            }
+            else if(element == '35') {
+                genreList.push('Comedy')
+            }
+            else if(element == '80') {
+                genreList.push('Crime')
+            }
+            else if(element == '99') {
+                genreList.push('Documentary')
+            }
+            else if(element == '18') {
+                genreList.push('Drama')
+            }
+            else if(element == '10751') {
+                genreList.push('Family')
+            }
+            else if(element == '14') {
+                genreList.push('Fantasy')
+            }
+            else if(element == '36') {
+                genreList.push('History')
+            }
+            else if(element == '27') {
+                genreList.push('Horror')
+            }
+            else if(element == '10402') {
+                genreList.push('Music')
+            }
+            else if(element == '9648') {
+                genreList.push('Mystery')
+            }
+            else if(element == '10749') {
+                genreList.push('Romance')
+            }
+            else if(element == '878') {
+                genreList.push('Science Fiction')
+            }
+            else if(element == '10770') {
+                genreList.push('TV Movie')
+            }
+            else if(element == '53') {
+                genreList.push('Thriller')
+            }
+            else if(element == '10752') {
+                genreList.push('War')
+            }
+            else if(element == '37') {
+                genreList.push('Western')
+            }
+            else if(element == '878') {
+                genreList.push('Science Fiction')
+            }
+            else if(element == '10759') {
+                genreList.push('Action & Adventure')
+            }
+            else if(element == '10762') {
+                genreList.push('Kids')
+            }
+            else if(element == '10763') {
+                genreList.push('News')
+            }
+            else if(element == '10764') {
+                genreList.push('Reality')
+            }
+            else if(element == '10765') {
+                genreList.push('Sci-Fi & Fantasy')
+            }
+            else if(element == '10766') {
+                genreList.push('Soap')
+            }
+            else if(element == '10767') {
+                genreList.push('Talk')
+            }
+            else if(element == '10768') {
+                genreList.push('War & Politics')
+            }
 
-    function getGenre() {
-
+        }
+        return genreList;
     }
 
     function getStreamingService() {
-
-    }
     
-    });
+    }
+
+});
 
 
 
