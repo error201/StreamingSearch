@@ -40,7 +40,18 @@
     z-index: 20;
 }
 
+.watch-list-main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
 #description-modal {
+    width: 80vw;
+    min-height: 80vh;
+}
+
+#watch-list-modal {
     width: 80vw;
     min-height: 80vh;
 }
@@ -49,3 +60,4 @@
     width: 75px;
     height: 75px;;
 }
+
