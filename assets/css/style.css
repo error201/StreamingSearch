@@ -4,6 +4,40 @@
     max-width: 16em;
     max-height: 8.9em;
     background-size: contain;
+    display: flex;
+    align-items: flex-end;
+}
+
+.arrow {
+    width: 50px;
+    height: 50px;
+    background: rgba(100, 100, 100, .7);
+    border: 0px solid white;
+    border-radius: 50px; 
+    position:absolute;
+    top:30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.arrow:focus{
+    background-color:  rgba(100, 100, 100, .7);
+}
+
+.arrow-icon {
+    color: white;
+    font-family: 'Material Icons';
+    font-size: 4.2rem;
+}
+
+.next {
+    right: 0;
+}
+
+.previous {
+    left: 0;
+    z-index: 20;
 }
 
 .watch-list-main {

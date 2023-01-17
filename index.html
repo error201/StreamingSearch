@@ -10,6 +10,10 @@
     <link 
         rel="stylesheet" 
         href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
     <link 
     rel="stylesheet" 
     href="./assets/css/style.css" />
@@ -64,16 +68,15 @@
         </div>
     </header>
     <main id="main-body" class="section center-align">
-        <div id="movie-carousel" class="carousel">Movie Carousel
-            <div class="carousel-fixed-item center middle-indicator">
-                <div class="left">
-                    <a href="Previo" class="movePrevCarousel middle-indicator-text waves-effect waves-light content-indicator"><i class="material-icons left  middle-indicator-text">chevron_left</i></a>
-                </div>
+        <div id="movie-carousel" class="carousel">
+            <div class="carousel-fixed-item center">
+                <button class="previous arrow arrow-button waves-effect waves-light">
+                    <i class="material-icons arrow-icon">chevron_left</i>
+                </button>
                 
-                <div class="right">
-                    <a href="Siguiente" class=" moveNextCarousel middle-indicator-text waves-effect waves-light content-indicator"><i class="material-icons right middle-indicator-text">chevron_right</i></a>
-                </div>
-            </div>
+                <button class="next arrow arrow-button waves-effect waves-light">
+                <i class="material-icons arrow-icon">chevron_right</i>
+                </button>
         </div>
     </main>
     <footer>
