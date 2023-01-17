@@ -29,23 +29,49 @@ $ (function(){
     var movieCarousel = $('#movie-carousel')
     var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
     var onScreenObjects = [];
-    getTopTenMovie();
+    //getTopTenMovie();
     var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
+    
+    var watchList = JSON.parse(localStorage.getItem('watch-list'));
+    console.log(watchList);
     populateCarousel(topTenMovies);
+    var watchList = JSON.parse(localStorage.getItem('watchList'));
+    
+    
+
     
     //Event Listeners---------------------------------------------
     $(document).ready(function(){
         //need to come to agreement on carousel functionality
         $('.carousel').carousel({
             padding: 10,
-            dist: -10
+            dist: 0,
+            fullWidth: true
         });
         $('.modal').modal();
     });
     
-    $('.card').on('click', function(){
+    //updated eventlistener to listen for any decendent of body that was a card to resolve the issue that the watch list cards weren't present at the time of onload
+    $('body').on('click', '.card', function(){
+        console.log($(this).children('.card-title').text());
         titleDetails($(this).children('.card-title').text());
     });
+
+    $('.watch-list-button').on('click', function(){
+        launchWatchList();
+    });
+
+    $('.carousel').on('click', '.arrow', function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        moveCarousel($(this));
+    });
+
+    $('body').on('click', '.save-button', function(){
+        updateWatchList($(this).parent().parent().children(".modal-header").children(".modal-title").text());
+        console.log($(this).parent().parent().children(".modal-header").children(".modal-title").text())
+    })
+
     
     //Functions----------------------------------------------------
     
@@ -134,19 +160,23 @@ $ (function(){
             card.append(cardTitle);
 
             //save button should be on right side of title card, floating.
-            var cardSave = $('<button class="save-button waves-effect waves-light btn grey darken-2">');
+            var cardSave = $('<button class="save-button wgitaves-effect waves-light btn grey darken-2">');
             //save data from fetch in object array for use in modals and save feature
             cardSave.text('Add +');
             card.append(cardSave);
 
             movieCarousel.append(card);
-
         }
-    
-    
     }
     
-    
+    function moveCarousel(element){
+        if(element.hasClass('next')){
+            $('#movie-carousel').carousel('next');
+        } else if(element.hasClass('previous')){
+            $('#movie-carousel').carousel('next');
+        }
+    }
+
     //Launch modal for title information
     async function titleDetails(element) {
         var openedTitle = onScreenObjects.find(obj => obj.title === element);
@@ -175,12 +205,52 @@ $ (function(){
     
     //save button function
     function updateWatchList(element) {
+        var savedTitle = onScreenObjects.find(obj => obj.title === element);
+        if(watchList === null) {
+            watchList = [];
+        }
     
+        var duplicate = false
+        var duplicateIndex = 0
+        for (let i = 0; i < watchList.length; i++) {
+            const element = watchList[i];
+            if(element.title === savedTitle.title) {
+                duplicate = true
+                duplicateIndex = i
+            }
+        }
+        //Duplicate save
+        if(duplicate === false) {
+            watchList.push(savedTitle)
+            localStorage.setItem('watchList', JSON.stringify(watchList))
+        }
+        else{
+        //Move duplicate title to front of index
+            watchList.splice(duplicateIndex, 1);
+            watchList.unshift(savedTitle);
+        }
+
+
+
     }
+    
     
     //open watch list modal
     function launchWatchList() {
-    
+    //eventually make this input for user to give name and create multiple watch lists
+    $('.watch-list-title').text('My Watch List');
+    //populate watch list with saved titles
+    console.log(watchList.length);
+    for (let i = 0; i < watchList.results.length; i++) {
+        var element = watchList.results[i];
+        var watchListCard = $('<div class="card modal-trigger" data-target="description-modal">');
+        watchListCard.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
+        var watchListCardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
+        watchListCardTitle.text(element.title);
+        watchListCard.append(watchListCardTitle);
+        $('.watch-list-main').append(watchListCard);
+        console.log('loop')
+    }
     
     }
     //Create conditional logic to turn genre codes into appropriate strings
