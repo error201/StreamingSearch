@@ -44,7 +44,7 @@ h4 {
 .arrow {
     width: 50px;
     height: 50px;
-    background: rgba(100, 100, 100, .7);
+    background: #bf360c80;
     border: 0px solid white;
     border-radius: 50px; 
     position:absolute;
@@ -55,7 +55,7 @@ h4 {
 }
 
 .arrow:focus{
-    background-color:  rgba(100, 100, 100, .7);
+    background-color: #bf360c80;
 }
 
 .arrow-icon {
@@ -78,6 +78,7 @@ h4 {
     flex-wrap: wrap;
     justify-content: space-around;
 }
+
 
 #description-modal {
     width: 80vw;
