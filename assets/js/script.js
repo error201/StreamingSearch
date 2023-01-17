@@ -26,31 +26,26 @@ $ (function(){
     var pageEl = $('body');
     var tmdbApiKey = "241112bdd32fa526246d8de7ad741118";
     var top10Tv = {};
-    var movieCarousel = $('#movie-carousel')
+    var movieCarousel = $('#movie-carousel');
+    var tvCarousel = $('#tv-carousel');
     var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
     var onScreenObjects = [];
-    //getTopTenMovie();
+    getTopTenMovie();
+    getTopTenTv();
     var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
-    
+    var topTenTV = JSON.parse(localStorage.getItem('topTenTV'));
     var watchList = JSON.parse(localStorage.getItem('watch-list'));
-    console.log(watchList);
-    populateCarousel(topTenMovies);
-    var watchList = JSON.parse(localStorage.getItem('watchList'));
-    
-    
+    var watchList = JSON.parse(localStorage.getItem('watchList'));     
+    // populateCarouselMovie(topTenMovies.results);
+    // populateCarouselMovie([]);
+    // populateCarouselTV(topTenMovies);
 
     
     //Event Listeners---------------------------------------------
     $(document).ready(function(){
         //need to come to agreement on carousel functionality
-        $('.carousel').carousel({
-            padding: 10,
-            dist: 0,
-            fullWidth: true
-        });
         $('.modal').modal();
     });
-    
     //updated eventlistener to listen for any decendent of body that was a card to resolve the issue that the watch list cards weren't present at the time of onload
     $('body').on('click', '.card', function(){
         console.log($(this).children('.card-title').text());
@@ -87,7 +82,7 @@ $ (function(){
     
     }
     
-    // TMDB api fetch function
+    //TMDB api fetch function
     function getTopTenTv() {
         var trendingTvUrl = `https://api.themoviedb.org/3/trending/tv/week?api_key=${tmdbApiKey}`
         fetch(trendingTvUrl)
@@ -95,7 +90,15 @@ $ (function(){
                 return response.json();
             })
             .then(function (data) {
-                console.log(data);
+                console.log(data.results)
+                populateCarouselTV(data.results);
+                $(document).ready(function(){
+                    $('#tv-carousel').carousel({
+                        padding: 10,
+                        dist: 0,
+                        fullWidth: true
+                    });
+                });
             });
     };
     
@@ -106,7 +109,14 @@ $ (function(){
                 return response.json();
             })
             .then(function (data) {
-                localStorage.setItem('topTenMovies', JSON.stringify(data));
+                populateCarouselMovie(data.results);
+                $(document).ready(function(){
+                    $('#movie-carousel').carousel({
+                        padding: 10,
+                        dist: 0,
+                        fullWidth: true
+                    });
+                });
             });
     };
     
@@ -129,9 +139,9 @@ $ (function(){
     };
     
     //place carousel card items in carousel
-    function populateCarousel(array) {
+    function populateCarouselMovie(array) {
         //cut results down to the 10 top rated movies
-        var results = array.results;
+        var results = array;
         results.sort(function(a, b){return b.popularity - a.popularity});
         var topRated = results.slice(0, 10);
     
@@ -168,12 +178,57 @@ $ (function(){
             movieCarousel.append(card);
         }
     }
+
+    function populateCarouselTV(array) {
+        //cut results down to the 10 top rated movies
+        var results = array;
+        results.sort(function(a, b){return b.popularity - a.popularity});
+        var topRated = results.slice(0, 10);
+    
+        for (let i = 0; i < topRated.length; i++) {
+            var element = topRated[i];
+            //create and add title object to array for use in modals and save features
+            var cardObj = {
+                title: element.name,
+                genres: element.genre_ids,
+                media: element.media_type,
+                release: element.first_air_date,
+                description: element.overview,
+                popularity: element.vote_average,
+                poster: element.poster_path,
+                backdrop: element.backdrop_path
+            }
+            onScreenObjects.push(cardObj);
+
+            //establish card keys for use in modal and saving
+            var card = $('<div class="carousel-item card modal-trigger" data-target="description-modal">');
+            card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
+            
+            //title card, needs to appear on bottom
+            var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
+            cardTitle.text(cardObj.title);
+            card.append(cardTitle);
+
+            //save button should be on right side of title card, floating.
+            var cardSave = $('<button class="save-button wgitaves-effect waves-light btn grey darken-2">');
+            //save data from fetch in object array for use in modals and save feature
+            cardSave.text('Add +');
+            card.append(cardSave);
+
+            tvCarousel.append(card);
+        }
+    }
     
     function moveCarousel(element){
-        if(element.hasClass('next')){
+        if(element.hasClass('movie-next')){
             $('#movie-carousel').carousel('next');
-        } else if(element.hasClass('previous')){
+        } else if(element.hasClass('movie-previous')){
             $('#movie-carousel').carousel('next');
+        }
+        if(element.hasClass('tv-next')){
+            $('#tv-carousel').carousel('next');
+        } else if(element.hasClass('tv-previous')){
+            $('#tv-carousel').carousel('next');
         }
     }
 
@@ -195,7 +250,7 @@ $ (function(){
         
         //fill modal contents
         $('.modal-title').text(openedTitle.title);
-        $('.modal-info').text(openedTitle.release + ' ' + genre + ' ' + ((Math.round(openedTitle.popularity)*10) + '%'));
+        $('.modal-info').text(openedTitle.release + ' ' + genre + ' ' + (Math.round(openedTitle.popularity * 10) + '%'));
         $('.modal-description').text(openedTitle.description);
         $('.modal-trailer').attr('src', `${youTubeUrl}`);
         $('.modal-services').text(streamingServices);

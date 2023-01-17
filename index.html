@@ -57,11 +57,11 @@
         <div class="col s12 valign-wrapper">
         <h1 id="site-name" class="col s8 left-align">Heading
         </h1>
-        <button class="watch-list-button col s4 right-align waves-effect waves-light btn-flat grey-text text-lighten-4 modal-trigger" data-target="watch-list-modal">Watch List</button>
+        <button class="watch-list-button col s4 right-align waves-effect waves btn-flat grey-text text-lighten-4 modal-trigger" data-target="watch-list-modal">Watch List</button>
         </div>
         
         <div id="search-div" class="col s12">
-            <button id="search-button" class="waves-effect waves-light btn grey darken-2">Media Query</button>
+            <button id="search-button" class="waves-effect waves btn grey darken-2">Media Query</button>
             <div class="input-field inline">
                 <input id="search-bar" type="text" class="" placeholder="Reservoir Dogs">
             </div>
@@ -70,13 +70,26 @@
     <main id="main-body" class="section center-align">
         <div id="movie-carousel" class="carousel">
             <div class="carousel-fixed-item center">
-                <button class="previous arrow arrow-button waves-effect waves-light">
+                <button class="previous movie-previous arrow arrow-button waves-effect waves">
                     <i class="material-icons arrow-icon">chevron_left</i>
                 </button>
                 
-                <button class="next arrow arrow-button waves-effect waves-light">
+                <button class="next movie-next arrow arrow-button waves-effect waves">
                 <i class="material-icons arrow-icon">chevron_right</i>
                 </button>
+            </div>
+
+        </div>
+        <div id="tv-carousel" class="carousel">
+            <div class="carousel-fixed-item center">
+                <button class="previous tv-previous arrow arrow-button waves-effect waves-light">
+                    <i class="material-icons arrow-icon">chevron_left</i>
+                </button>
+                
+                <button class="next tv-next arrow arrow-button waves-effect waves-light">
+                <i class="material-icons arrow-icon">chevron_right</i>
+                </button>
+            </div>
         </div>
     </main>
     <footer>
