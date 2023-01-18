@@ -195,7 +195,6 @@ $(function () {
             //create and add title object to array for use in modals and save features
             var cardObj = {
                 title: element.title,
-                id: element.id,
                 genres: element.genre_ids,
                 media: element.media_type,
                 release: element.release_date,
@@ -218,8 +217,9 @@ $(function () {
             //save button should be on right side of title card, floating.
             var cardSave = $('<button class="save-button wgitaves-effect waves-light btn grey darken-2">');
             //save data from fetch in object array for use in modals and save feature
-            cardSave.text('Add +');
-            card.append(cardSave);
+            // cardSave.text('Add +');
+            // card.append(cardSave);
+
             movieCarousel.append(card);
         }
     }
@@ -235,7 +235,6 @@ $(function () {
             //create and add title object to array for use in modals and save features
             var cardObj = {
                 title: element.name,
-                id: element.id,
                 genres: element.genre_ids,
                 media: element.media_type,
                 release: element.first_air_date,
@@ -251,15 +250,15 @@ $(function () {
             card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
             
             //title card, needs to appear on bottom
-            var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
+            var cardTitle = $('<div class="card-title left-align ">')
             cardTitle.text(cardObj.title);
             card.append(cardTitle);
 
             //save button should be on right side of title card, floating.
             var cardSave = $('<button class="save-button wgitaves-effect waves-light btn grey darken-2">');
             //save data from fetch in object array for use in modals and save feature
-            cardSave.text('Add +');
-            card.append(cardSave);
+            // cardSave.text('Add +');
+            // card.append(cardSave);
 
             tvCarousel.append(card);
         }
@@ -281,10 +280,15 @@ $(function () {
 
     //Launch modal for title information
     async function titleDetails(element) {
-        console.log(onScreenObjects)
-        var openedTitle = onScreenObjects.find(obj => obj.id == element);
-        console.log(element)
-        console.log(openedTitle);
+
+        var openedTitle = onScreenObjects.find(obj => obj.title === element);
+        var modalContent = $('.modal-main')
+        var modalImage = $('<img>')
+        console.log(modalContent)
+        console.log(modalImage)
+        var genre = getGenre(openedTitle.genres);
+        console.log(genre)
+        var streamingServices = getStreamingService(openedTitle.title);
         var genre = getGenre(openedTitle.genres).join(', ');
 
         //getting the trailer into modal using async functions.
@@ -304,6 +308,7 @@ $(function () {
         var youTubeUrl = 'https://www.youtube.com/embed/' + await getUrl();
         var streamingServices = await getProviders();
         streamingMethod = streamingServices.splice(0,1);
+
         //fill modal contents
         $('.modal-title').text(openedTitle.title);
         $('.modal-info').text(openedTitle.release + ' ' + genre + ' ' + (Math.round(openedTitle.popularity * 10) + '%'));
@@ -312,6 +317,11 @@ $(function () {
         $('.modal-services').text(streamingMethod + streamingServices.join(', '));
 
         $('.modal-save').text('Add +');
+        modalContent.attr('style', `background-image:url(https://image.tmdb.org/t/p/w500/${openedTitle.poster}`);
+        
+        
+        console.log(modalContent);
+        console.log(modalImage);
 
     }
 
@@ -366,7 +376,7 @@ $(function () {
         watchListCard.append(watchListCardTitle);
         $('.watch-list-main').append(watchListCard);
     }
-
+    
     }
     //Create conditional logic to turn genre codes into appropriate strings
     //Return array of strings
@@ -463,6 +473,7 @@ $(function () {
         }
         return genreList;
     }
+
 
     async function getStreamingService(element, type) {
         var id = element;
