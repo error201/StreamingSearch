@@ -235,6 +235,10 @@ $ (function(){
     //Launch modal for title information
     async function titleDetails(element) {
         var openedTitle = onScreenObjects.find(obj => obj.title === element);
+        var modalContent = $('.modal-main')
+        var modalImage = $('<img>')
+        console.log(modalContent)
+        console.log(modalImage)
         var genre = getGenre(openedTitle.genres);
         console.log(genre)
         var streamingServices = getStreamingService(openedTitle.title);
@@ -255,6 +259,11 @@ $ (function(){
         $('.modal-trailer').attr('src', `${youTubeUrl}`);
         $('.modal-services').text(streamingServices);
         $('.modal-save').text('Add +');
+        modalContent.attr('style', `background-image:url(https://image.tmdb.org/t/p/w500/${openedTitle.poster}`);
+        
+        
+        console.log(modalContent);
+        console.log(modalImage);
 
     }
     
