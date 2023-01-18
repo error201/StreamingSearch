@@ -21,44 +21,44 @@
 //a. location of watch-list button needs to be determined.
 
 
-$ (function(){
+$(function () {
     //Global Variables---------------------------------------------
     var pageEl = $('body');
     var tmdbApiKey = "241112bdd32fa526246d8de7ad741118";
     var top10Tv = {};
     var movieCarousel = $('#movie-carousel');
     var tvCarousel = $('#tv-carousel');
+    var searchTextEl = $('#search-bar')
     var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
     var onScreenObjects = [];
     getTopTenMovie();
     getTopTenTv();
-    var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
-    var topTenTV = JSON.parse(localStorage.getItem('topTenTV'));
     var watchList = JSON.parse(localStorage.getItem('watch-list'));
-    var watchList = JSON.parse(localStorage.getItem('watchList'));     
-    // populateCarouselMovie(topTenMovies.results);
-    // populateCarouselMovie([]);
-    // populateCarouselTV(topTenMovies);
-
     
     //Event Listeners---------------------------------------------
-    $(document).ready(function(){
-        //need to come to agreement on carousel functionality
+    $(document).ready(function () {
         $('.modal').modal();
     });
+
     //updated eventlistener to listen for any decendent of body that was a card to resolve the issue that the watch list cards weren't present at the time of onload
-    $('body').on('click', '.card', function(){
+    $("#search-button").on("click", function(event){
+        event.preventDefault();
+        var searchedText = $(searchTextEl).val();
+        getUserQuery(searchedText);
+    });
+
+    $('body').on('click', '.card', function () {
         console.log($(this).children('.card-title').text());
         titleDetails($(this).children('.card-title').text());
     });
 
-    $('.watch-list-button').on('click', function(){
+    $('.watch-list-button').on('click', function () {
         launchWatchList();
     });
 
-    $('.carousel').on('click', '.arrow', function(event){
+    $('.carousel').on('click', '.arrow', function (event) {
         event.preventDefault();
-        event.stopPropagation();
+        event.stopPropagagittion();
         moveCarousel($(this));
     });
 
@@ -69,20 +69,49 @@ $ (function(){
 
     
     //Functions----------------------------------------------------
-    
+
     //streaming availability api fetch function
     //add seach limit protection so we dont go over 50 per day
     //API Key: 95154b8a57msha4e5c1348b5f178p1d6f1ejsn62dcb59bc28f
-    function getUserQuery(input) {
-    
+    function getUserQuery(searchedText) {
+        // If there are already cards here, get rid of them.
+        var existingCardEls = $('.search-card-col');
+        if (existingCardEls){
+            $(existingCardEls).remove();
+        };
+        // Fetch the results!
+        var uriEncodedText = encodeURI(searchedText);
+        var searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${tmdbApiKey}&language=en-US&page=1&include_adult=false&query=${uriEncodedText}`;
+        fetch(searchUrl)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            // add cards for search results.
+            var searchResults = data.results.slice(0, 5)
+            var cardArea = $("#search-result-cards");
+            for (var [index, item] of searchResults.entries()){
+                var newCardColumn = $('<div class="col s2 m2 l2 search-card-col"></div>')
+                var newSearchCard = $('<div class="card">')
+                var newCardImage = $('<div class="card-image">')
+                var newCardImageSrc = $(`<img src="https://image.tmdb.org/t/p/w500/${item.poster_path}">`)
+                var newCardTitle = $(`<span class="card-title">${item.original_title}</span>`)
+                $(cardArea).append(newCardColumn);
+                $(newCardColumn).append(newSearchCard);
+                $(newSearchCard).append(newCardImage);
+                newSearchCard.attr("data-movie-id", item.id);
+                $(newCardImage).append(newCardImageSrc);
+                $(newCardImage).append(newCardTitle);
+            }
+        });
     }
-    
+
     //display search results in rows 4 columns wide
     function searchResults(array) {
-    
+
     }
-    
-    //TMDB api fetch function
+
+    // TMDB api fetch function
     function getTopTenTv() {
         var trendingTvUrl = `https://api.themoviedb.org/3/trending/tv/week?api_key=${tmdbApiKey}`
         fetch(trendingTvUrl)
@@ -101,7 +130,7 @@ $ (function(){
                 });
             });
     };
-    
+
     function getTopTenMovie() {
         var trendingMovieUrl = `https://api.themoviedb.org/3/trending/movie/week?api_key=${tmdbApiKey}`
         return fetch(trendingMovieUrl)
@@ -119,7 +148,7 @@ $ (function(){
                 });
             });
     };
-    
+
     // Youtube api fetch function
     async function getYoutubeTrailers(searchKeyword) {
         // console.log(searchKeyword);
@@ -137,7 +166,7 @@ $ (function(){
         // return test;
         return '-XwSmZ5n_J4';
     };
-    
+
     //place carousel card items in carousel
     function populateCarouselMovie(array) {
         //cut results down to the 10 top rated movies
@@ -178,7 +207,7 @@ $ (function(){
             movieCarousel.append(card);
         }
     }
-
+    
     function populateCarouselTV(array) {
         //cut results down to the 10 top rated movies
         var results = array;
@@ -219,6 +248,7 @@ $ (function(){
         }
     }
     
+
     function moveCarousel(element){
         if(element.hasClass('movie-next')){
             $('#movie-carousel').carousel('next');
@@ -242,6 +272,8 @@ $ (function(){
         var genre = getGenre(openedTitle.genres);
         console.log(genre)
         var streamingServices = getStreamingService(openedTitle.title);
+        var genre = getGenre(openedTitle.genres).join(', ');
+
         //getting the trailer into modal using async functions.
         //can propably be written better but it works so were keeping it as is for now.
         async function getUrl(){
@@ -250,14 +282,24 @@ $ (function(){
             })
             return returnedUrl;
         }
-        youTubeUrl = 'https://www.youtube.com/embed/' + await getUrl();
-        
+        async function getProviders(){
+            returnedProviders = await getStreamingService(openedTitle.id, openedTitle.media).then(prov => {
+                return prov;
+            })
+            return returnedProviders;
+        }
+        var youTubeUrl = 'https://www.youtube.com/embed/' + await getUrl();
+        var streamingServices = await getProviders();
+        console.log(streamingServices);
+        streamingMethod = streamingServices.splice(0,1);
+
         //fill modal contents
         $('.modal-title').text(openedTitle.title);
         $('.modal-info').text(openedTitle.release + ' ' + genre + ' ' + (Math.round(openedTitle.popularity * 10) + '%'));
         $('.modal-description').text(openedTitle.description);
         $('.modal-trailer').attr('src', `${youTubeUrl}`);
-        $('.modal-services').text(streamingServices);
+        $('.modal-services').text(streamingMethod + streamingServices.join(', '));
+
         $('.modal-save').text('Add +');
         modalContent.attr('style', `background-image:url(https://image.tmdb.org/t/p/w500/${openedTitle.poster}`);
         
@@ -266,7 +308,7 @@ $ (function(){
         console.log(modalImage);
 
     }
-    
+
     //save button function
     function updateWatchList(element) {
         var savedTitle = onScreenObjects.find(obj => obj.title === element);
@@ -303,12 +345,15 @@ $ (function(){
     function launchWatchList() {
     //eventually make this input for user to give name and create multiple watch lists
     $('.watch-list-title').text('My Watch List');
+    if(watchList === null) {
+        watchList = [];
+    }
     //populate watch list with saved titles
-    console.log(watchList.length);
-    for (let i = 0; i < watchList.results.length; i++) {
-        var element = watchList.results[i];
+    console.log(watchList);
+    for (let i = 0; i < watchList.length; i++) {
+        var element = watchList[i];
         var watchListCard = $('<div class="card modal-trigger" data-target="description-modal">');
-        watchListCard.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
+        watchListCard.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop})`);
         var watchListCardTitle = $('<div class="card-title left-align ">')
         watchListCardTitle.text(element.title);
         watchListCard.append(watchListCardTitle);
@@ -414,12 +459,80 @@ $ (function(){
         return genreList;
     }
 
-    function getStreamingService() {
-    
+
+    async function getStreamingService(element, type) {
+        var id = element;
+        var media = type;
+        var providers = [];
+        console.log(id);
+        if(media === 'movie'){
+            var streamRequest = `https://api.themoviedb.org/3/movie/${id}/watch/providers?api_key=${tmdbApiKey}`
+            var movieProvidersArr = [];
+
+            await fetch(streamRequest)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log(data);
+                    if(data.results.US != undefined){
+                        if(data.results.US.rent != undefined){
+                            movieProvidersArr = data.results.US.rent;
+                            for (let i = 0; i < movieProvidersArr.length; i++) {
+                                const element = movieProvidersArr[i];
+                                providers.push(element.provider_name);
+                            }
+                            providers.unshift('Rent: ')
+                        } else if(data.results.US.flatrate != undefined) {
+                            movieProvidersArr = data.results.US.flatrate;
+                            for (let i = 0; i < movieProvidersArr.length; i++) {
+                                const element = movieProvidersArr[i];
+                                providers.push(element.provider_name);
+                            }
+                            providers.unshift('Flatrate: ')
+                        } else if (data.results.US.buy != undefined){
+                            movieProvidersArr = data.results.US.buy;
+                            for (let i = 0; i < movieProvidersArr.length; i++) {
+                                const element = movieProvidersArr[i];
+                                providers.push(element.provider_name);
+                            }
+                            providers.unshift('Buy: ')
+                        } else {
+                            providers.push('No streaming services found. Sorry.');
+                        }
+                    } else {
+                        providers.push('No streaming services found. Sorry.');
+                    }
+                    console.log(providers)
+                });
+        } else if(media === 'tv'){
+            var streamRequest = `https://api.themoviedb.org/3/tv/${id}/watch/providers?api_key=${tmdbApiKey}`
+            var tvProvidersArr = [];
+            var providers = [];
+
+            await fetch(streamRequest)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log(data);
+                    if(data.results.US != undefined){
+                        tvProvidersArr = data.results.US.flatrate;
+                        for (let i = 0; i < tvProvidersArr.length; i++) {
+                            const element = tvProvidersArr[i];
+                            providers.push(element.provider_name);
+                        }
+                        providers.unshift('Flatrate: ')
+                    } else {
+                        providers.push('No streaming services found. Sorry.');
+                    }
+                    console.log(providers)
+                });
+            }
+        return providers;
     }
 
 });
 
 
 
-    
