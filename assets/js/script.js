@@ -21,38 +21,107 @@
 //a. location of watch-list button needs to be determined.
 
 
-$ (function(){
+$(function () {
     //Global Variables---------------------------------------------
+    var pageEl = $('body');
     var tmdbApiKey = "241112bdd32fa526246d8de7ad741118";
-    var top10Tv = {};
     var movieCarousel = $('#movie-carousel')
     var youTubeApiKey = "AIzaSyC5udntgdnrUPAP9va88nAa674Ss1wWlmI";
-
-    getTopTenMovie();
+    var onScreenObjects = [];
+    var searchTextEl = $("#search-bar");
+    //getTopTenMovie();
     var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
+
+    var watchList = JSON.parse(localStorage.getItem('watch-list'));
+    console.log(watchList);
     populateCarousel(topTenMovies);
-    
+    var watchList = JSON.parse(localStorage.getItem('watchList'));
+
+
+
+
     //Event Listeners---------------------------------------------
-    $(document).ready(function(){
-        $('.carousel').carousel();
+    $(document).ready(function () {
+        //need to come to agreement on carousel functionality
+        $('.carousel').carousel({
+            padding: 10,
+            dist: 0,
+            fullWidth: true
+        });
+        $('.modal').modal();
     });
-    
-    
-    
+
+    //updated eventlistener to listen for any decendent of body that was a card to resolve the issue that the watch list cards weren't present at the time of onload
+    $("#search-button").on("click", function(event){
+        event.preventDefault();
+        var searchedText = $(searchTextEl).val();
+        getUserQuery(searchedText);
+    });
+
+    $('body').on('click', '.card', function () {
+        console.log($(this).children('.card-title').text());
+        titleDetails($(this).children('.card-title').text());
+    });
+
+    $('.watch-list-button').on('click', function () {
+        launchWatchList();
+    });
+
+    $('.carousel').on('click', '.arrow', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        moveCarousel($(this));
+    });
+
+    $('body').on('click', '.save-button', function () {
+        updateWatchList($(this).parent().parent().children(".modal-header").children(".modal-title").text());
+        console.log($(this).parent().parent().children(".modal-header").children(".modal-title").text())
+    })
+
+
     //Functions----------------------------------------------------
-    
+
     //streaming availability api fetch function
     //add seach limit protection so we dont go over 50 per day
     //API Key: 95154b8a57msha4e5c1348b5f178p1d6f1ejsn62dcb59bc28f
-    function getUserQuery(input) {
-    
+    function getUserQuery(searchedText) {
+        // If there are already cards here, get rid of them.
+        var existingCardEls = $('.search-card-col');
+        if (existingCardEls){
+            $(existingCardEls).remove();
+        };
+        // Fetch the results!
+        var uriEncodedText = encodeURI(searchedText);
+        var searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${tmdbApiKey}&language=en-US&page=1&include_adult=false&query=${uriEncodedText}`;
+        fetch(searchUrl)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            // add cards for search results.
+            var searchResults = data.results.slice(0, 5)
+            var cardArea = $("#search-result-cards");
+            for (var [index, item] of searchResults.entries()){
+                var newCardColumn = $('<div class="col s2 m2 l2 search-card-col"></div>')
+                var newSearchCard = $('<div class="card">')
+                var newCardImage = $('<div class="card-image">')
+                var newCardImageSrc = $(`<img src="https://image.tmdb.org/t/p/w500/${item.poster_path}">`)
+                var newCardTitle = $(`<span class="card-title">${item.original_title}</span>`)
+                $(cardArea).append(newCardColumn);
+                $(newCardColumn).append(newSearchCard);
+                $(newSearchCard).append(newCardImage);
+                newSearchCard.attr("data-movie-id", item.id);
+                $(newCardImage).append(newCardImageSrc);
+                $(newCardImage).append(newCardTitle);
+            }
+        });
     }
-    
+
     //display search results in rows 4 columns wide
     function searchResults(array) {
-    
+
     }
-    
+
     // TMDB api fetch function
     function getTopTenTv() {
         var trendingTvUrl = `https://api.themoviedb.org/3/trending/tv/week?api_key=${tmdbApiKey}`
@@ -64,81 +133,263 @@ $ (function(){
                 console.log(data);
             });
     };
-    
+
     function getTopTenMovie() {
         var trendingMovieUrl = `https://api.themoviedb.org/3/trending/movie/week?api_key=${tmdbApiKey}`
-        fetch(trendingMovieUrl)
+        return fetch(trendingMovieUrl)
             .then(function (response) {
                 return response.json();
             })
             .then(function (data) {
-                console.log(data);
                 localStorage.setItem('topTenMovies', JSON.stringify(data));
             });
     };
-    
+
     // Youtube api fetch function
-    function getYoutubeTrailers(searchKeyword) {
-        var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}part=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
-        fetch(youTubeApiUrl)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                console.log(data);
-            });
+    async function getYoutubeTrailers(searchKeyword) {
+        // console.log(searchKeyword);
+        // var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}%previewpart=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
+
+        // var test = await fetch(youTubeApiUrl)
+        //     .then(function (response) {
+        //         return response.json();
+        //     })
+        //     .then(function (data) {
+        //         console.log(data);
+        //         console.log(data.items[0].id.videoId);
+        //         return data.items[0].id.videoId;
+        //     });
+        // return test;
+        return '-XwSmZ5n_J4';
     };
-    
+
     //place carousel card items in carousel
     function populateCarousel(array) {
         //cut results down to the 10 top rated movies
         var results = array.results;
-        results.sort(function(a, b){return b.popularity - a.popularity});
-        topRatedMovies = results.slice(0, 10);
-        console.log(topRatedMovies);
-    
-        for (let i = 0; i < topRatedMovies.length; i++) {
-            var element = topRatedMovies[i];
-            
-            var card = $('<div class="carousel-item card">');
-            card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.poster_path})`);
-            
+        results.sort(function (a, b) { return b.popularity - a.popularity });
+        var topRated = results.slice(0, 10);
+
+        for (let i = 0; i < topRated.length; i++) {
+            var element = topRated[i];
+            //create and add title object to array for use in modals and save features
+            var cardObj = {
+                title: element.title,
+                genres: element.genre_ids,
+                media: element.media_type,
+                release: element.release_date,
+                description: element.overview,
+                popularity: element.vote_average,
+                poster: element.poster_path,
+                backdrop: element.backdrop_path
+            }
+            onScreenObjects.push(cardObj);
+
+            //establish card keys for use in modal and saving
+            var card = $('<div class="carousel-item card modal-trigger" data-target="description-modal">');
+            card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
+
+            //title card, needs to appear on bottom
             var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
-            
-            var cardSave = $('<button class="waves-effect waves-light btn grey darken-2">');
-    
-            cardTitle.text(element.title);
-            cardSave.text('Add +');
-    
+            cardTitle.text(cardObj.title);
             card.append(cardTitle);
+
+            //save button should be on right side of title card, floating.
+            var cardSave = $('<button class="save-button wgitaves-effect waves-light btn grey darken-2">');
+            //save data from fetch in object array for use in modals and save feature
+            cardSave.text('Add +');
             card.append(cardSave);
+
             movieCarousel.append(card);
         }
-    
-    
     }
-    
-    
+
+    function moveCarousel(element) {
+        if (element.hasClass('next')) {
+            $('#movie-carousel').carousel('next');
+        } else if (element.hasClass('previous')) {
+            $('#movie-carousel').carousel('next');
+        }
+    }
+
     //Launch modal for title information
-    function titleDetails(element) {
-    
+    async function titleDetails(element) {
+        var openedTitle = onScreenObjects.find(obj => obj.title === element);
+        var genre = getGenre(openedTitle.genres);
+        console.log(genre)
+        var streamingServices = getStreamingService(openedTitle.title);
+        //getting the trailer into modal using async functions.
+        //can propably be written better but it works so were keeping it as is for now.
+        async function getUrl() {
+            returnedUrl = await getYoutubeTrailers(openedTitle.title).then(url => {
+                return url;
+            })
+            return returnedUrl;
+        }
+        youTubeUrl = 'https://www.youtube.com/embed/' + await getUrl();
+
+        //fill modal contents
+        $('.modal-title').text(openedTitle.title);
+        $('.modal-info').text(openedTitle.release + ' ' + genre + ' ' + ((Math.round(openedTitle.popularity) * 10) + '%'));
+        $('.modal-description').text(openedTitle.description);
+        $('.modal-trailer').attr('src', `${youTubeUrl}`);
+        $('.modal-services').text(streamingServices);
+        $('.modal-save').text('Add +');
+
     }
-    
+
     //save button function
     function updateWatchList(element) {
-    
+        var savedTitle = onScreenObjects.find(obj => obj.title === element);
+        if (watchList === null) {
+            watchList = [];
+        }
+
+        var duplicate = false
+        var duplicateIndex = 0
+        for (let i = 0; i < watchList.length; i++) {
+            const element = watchList[i];
+            if (element.title === savedTitle.title) {
+                duplicate = true
+                duplicateIndex = i
+            }
+        }
+        //Duplicate save
+        if (duplicate === false) {
+            watchList.push(savedTitle)
+            localStorage.setItem('watchList', JSON.stringify(watchList))
+        }
+        else {
+            //Move duplicate title to front of index
+            watchList.splice(duplicateIndex, 1);
+            watchList.unshift(savedTitle);
+        }
+
+
+
     }
-    
+
+
     //open watch list modal
     function launchWatchList() {
-    
-    
+        //eventually make this input for user to give name and create multiple watch lists
+        $('.watch-list-title').text('My Watch List');
+        //populate watch list with saved titles
+        console.log(watchList.length);
+        for (let i = 0; i < watchList.results.length; i++) {
+            var element = watchList.results[i];
+            var watchListCard = $('<div class="card modal-trigger" data-target="description-modal">');
+            watchListCard.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
+            var watchListCardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
+            watchListCardTitle.text(element.title);
+            watchListCard.append(watchListCardTitle);
+            $('.watch-list-main').append(watchListCard);
+            console.log('loop')
+        }
+
     }
-    
-    getYoutubeTrailers('They Live movie trailer');
+    //Create conditional logic to turn genre codes into appropriate strings
+    //Return array of strings
+    //
+    function getGenre(array) {
+        console.log(array)
+        var genreList = [];
+        for (let i = 0; i < array.length; i++) {
+            const element = array[i];
+            if (element == '28') {
+                genreList.push("Action")
+            }
+            else if (element == '12') {
+                genreList.push('Adventure')
+            }
+            else if (element == '16') {
+                genreList.push('Animation')
+            }
+            else if (element == '35') {
+                genreList.push('Comedy')
+            }
+            else if (element == '80') {
+                genreList.push('Crime')
+            }
+            else if (element == '99') {
+                genreList.push('Documentary')
+            }
+            else if (element == '18') {
+                genreList.push('Drama')
+            }
+            else if (element == '10751') {
+                genreList.push('Family')
+            }
+            else if (element == '14') {
+                genreList.push('Fantasy')
+            }
+            else if (element == '36') {
+                genreList.push('History')
+            }
+            else if (element == '27') {
+                genreList.push('Horror')
+            }
+            else if (element == '10402') {
+                genreList.push('Music')
+            }
+            else if (element == '9648') {
+                genreList.push('Mystery')
+            }
+            else if (element == '10749') {
+                genreList.push('Romance')
+            }
+            else if (element == '878') {
+                genreList.push('Science Fiction')
+            }
+            else if (element == '10770') {
+                genreList.push('TV Movie')
+            }
+            else if (element == '53') {
+                genreList.push('Thriller')
+            }
+            else if (element == '10752') {
+                genreList.push('War')
+            }
+            else if (element == '37') {
+                genreList.push('Western')
+            }
+            else if (element == '878') {
+                genreList.push('Science Fiction')
+            }
+            else if (element == '10759') {
+                genreList.push('Action & Adventure')
+            }
+            else if (element == '10762') {
+                genreList.push('Kids')
+            }
+            else if (element == '10763') {
+                genreList.push('News')
+            }
+            else if (element == '10764') {
+                genreList.push('Reality')
+            }
+            else if (element == '10765') {
+                genreList.push('Sci-Fi & Fantasy')
+            }
+            else if (element == '10766') {
+                genreList.push('Soap')
+            }
+            else if (element == '10767') {
+                genreList.push('Talk')
+            }
+            else if (element == '10768') {
+                genreList.push('War & Politics')
+            }
 
-    });
+        }
+        return genreList;
+    }
+
+    function getStreamingService() {
+
+    }
+
+});
 
 
 
-    
