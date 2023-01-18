@@ -1,39 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-    rel="stylesheet"
-    href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link 
-        rel="stylesheet" 
-        href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-    <link 
-    rel="stylesheet" 
-    href="./assets/css/style.css" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
 
     <!-- lets come up with a spiffy name -->
     <title>Streaming Search</title>
 </head>
-<body class="grey darken-3">
+
+<body class="grey darken-4">
     <!-- Modals -->
     <div id="description-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header row center-align">
                 <h3 class="modal-title"></h3>
                 <p class="modal-info"></p>
+                <!-- <br> -->
+                <p class="modal-description"></p>
             </div>
-            <div class="modal-main row">
-                <p class="modal-description col s5"></p>
-                <iframe width="400" height="225" class="modal-trailer"></iframe>
+           
+            <div class="modal-main">
+                <div class = "poster"></div>
+                <iframe width="480" height="300" class="modal-trailer"></iframe>
             </div>
-            <div class="modal-footer row center-align">
+            <div class="modal-footer">
                 <p class="modal-services"></p>
                 <button class="modal-save save-button waves-effect waves-light btn grey darken-2"></button>
             </div>
@@ -53,30 +50,55 @@
         </div>
     </div>
     <!-- Main Code -->
-    <header id="header" class="row section grey darken-4 center-align">
+    <header id="header" class="row section #bf360c deep-orange darken-4 center-align">
         <div class="col s12 valign-wrapper">
-        <h1 id="site-name" class="col s8 left-align">Heading
-        </h1>
-        <button class="watch-list-button col s4 right-align waves-effect waves-light btn-flat grey-text text-lighten-4 modal-trigger" data-target="watch-list-modal">Watch List</button>
+            <h1 id="site-name" class="col s8 left-align">Heading
+            </h1>
+            <button
+                class="watch-list-button col s4 right-align waves-effect waves-light btn-flat grey-text text-lighten-4 modal-trigger"
+                data-target="watch-list-modal">Watch List</button>
         </div>
-        
+
         <div id="search-div" class="col s12">
-            <button id="search-button" class="waves-effect waves-light btn grey darken-2">Media Query</button>
+            <button id="search-button" class="waves-effect waves btn grey darken-2">Media Query</button>
             <div class="input-field inline">
                 <input id="search-bar" type="text" class="" placeholder="Reservoir Dogs">
             </div>
         </div>
     </header>
     <main id="main-body" class="section center-align">
+        <!-- cards for search results -->
+        <div class="row center-align">
+            <div id="search-result-cards" class="col s12 m7">
+            </div>
+        </div>
+        <!-- Carousels -->
+        <h4>Trending Movies</h4>
         <div id="movie-carousel" class="carousel">
             <div class="carousel-fixed-item center">
-                <button class="previous arrow arrow-button waves-effect waves-light">
+                <button class="previous movie-previous arrow arrow-button waves-effect waves">
                     <i class="material-icons arrow-icon">chevron_left</i>
                 </button>
-                
-                <button class="next arrow arrow-button waves-effect waves-light">
-                <i class="material-icons arrow-icon">chevron_right</i>
+
+                <button class="next movie-next arrow arrow-button waves-effect waves">
+                    <i class="material-icons arrow-icon">chevron_right</i>
                 </button>
+            </div>
+
+        </div>
+        <br>
+        <br>
+        <h4>Trending TV</h4>
+        <div id="tv-carousel" class="carousel">
+            <div class="carousel-fixed-item center">
+                <button class="previous tv-previous arrow arrow-button waves-effect waves-light">
+                    <i class="material-icons arrow-icon">chevron_left</i>
+                </button>
+
+                <button class="next tv-next arrow arrow-button waves-effect waves-light">
+                    <i class="material-icons arrow-icon">chevron_right</i>
+                </button>
+            </div>
         </div>
     </main>
     <footer>
@@ -87,4 +109,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="./assets/js/script.js"></script>
 </body>
+
 </html>

@@ -1,3 +1,41 @@
+* {
+    font-family: monospace;
+}
+
+header {
+    color: white;
+    height: 12vh;
+}
+
+main {
+    margin-top: 9rem;
+    height: 67vh;
+    /* background-color: black; */
+}
+
+h4 {
+    color: white;
+    text-align: left;
+    margin-left: 2.5rem ;
+}
+
+.watch-list-button {
+    font-size: 130%;
+}
+
+.card-title {
+    width: 100%;
+    height: 100%;
+    color: white;
+    text-align:center;
+    display: flex;
+    justify-content:center;
+    align-items: flex-end;
+    text-emphasis: bold;
+    font-size-adjust: 50%;
+    background: linear-gradient(0deg, #00000088 30%, #ffffff44 100%);
+}
+
 .card {
     min-width: 16em;
     min-height: 8.9em;
@@ -8,10 +46,13 @@
     align-items: flex-end;
 }
 
+.search-poster {
+}
+
 .arrow {
     width: 50px;
     height: 50px;
-    background: rgba(100, 100, 100, .7);
+    background: #bf360c80;
     border: 0px solid white;
     border-radius: 50px; 
     position:absolute;
@@ -22,7 +63,7 @@
 }
 
 .arrow:focus{
-    background-color:  rgba(100, 100, 100, .7);
+    background-color: #bf360c80;
 }
 
 .arrow-icon {
@@ -30,6 +71,12 @@
     font-family: 'Material Icons';
     font-size: 4.2rem;
 }
+
+/* .carousel {
+    display: flex;
+    justify-items: center;
+} */
+
 
 .next {
     right: 0;
@@ -46,6 +93,7 @@
     justify-content: space-around;
 }
 
+
 #description-modal {
     width: 80vw;
     min-height: 80vh;
@@ -57,7 +105,64 @@
 }
 
 #logo {
-    width: 75px;
-    height: 75px;;
+    /* display: flex;
+    justify-self: flex-end; */
+    position: absolute;
+    right: 0;
+    width: 60px;
+    height: 60px;
 }
 
+footer {
+    height: 9vh;
+    display: flex;
+    align-items: flex-end;
+}
+
+.modal, .modal-services {
+    background-color: #fff3e0;
+}
+
+.modal-description {
+    font-size: 150%;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-left: 5rem;
+    padding-right: 5rem;
+}
+
+.modal-info {
+    font-size: 120%;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+.modal-title {
+    font-weight: bold;
+    font-size: 500%;
+}
+
+.modal-footer {
+    background-color: #fff3e0;
+
+}
+
+.modal-gradient {
+    max-width: 3rem;
+}
+
+
+.poster {
+    min-height: 51vh;
+    /* max-width: 7rem; */
+}
+
+.modal-main {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    background-repeat: no-repeat;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: center;
+    margin-left: 10rem;
+}
