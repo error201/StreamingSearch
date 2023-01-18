@@ -239,7 +239,7 @@ $ (function(){
     async function titleDetails(element) {
         var openedTitle = onScreenObjects.find(obj => obj.title === element);
         var genre = getGenre(openedTitle.genres).join(', ');
-        console.log(genre);
+
         //getting the trailer into modal using async functions.
         //can propably be written better but it works so were keeping it as is for now.
         async function getUrl(){
@@ -263,7 +263,8 @@ $ (function(){
         $('.modal-info').text(openedTitle.release + ' ' + genre + ' ' + (Math.round(openedTitle.popularity * 10) + '%'));
         $('.modal-description').text(openedTitle.description);
         $('.modal-trailer').attr('src', `${youTubeUrl}`);
-        $('.modal-services').text(streamingMethod + streamingServices.join(', '));
+        $('.modal-services').text(streamingServices.join(', '));
+
         $('.modal-save').text('Add +');
 
     }
@@ -304,12 +305,15 @@ $ (function(){
     function launchWatchList() {
     //eventually make this input for user to give name and create multiple watch lists
     $('.watch-list-title').text('My Watch List');
+    if(watchList === null) {
+        watchList = [];
+    }
     //populate watch list with saved titles
-    console.log(watchList.length);
-    for (let i = 0; i < watchList.results.length; i++) {
-        var element = watchList.results[i];
+    console.log(watchList);
+    for (let i = 0; i < watchList.length; i++) {
+        var element = watchList[i];
         var watchListCard = $('<div class="card modal-trigger" data-target="description-modal">');
-        watchListCard.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
+        watchListCard.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop})`);
         var watchListCardTitle = $('<div class="card-title left-align ">')
         watchListCardTitle.text(element.title);
         watchListCard.append(watchListCardTitle);
