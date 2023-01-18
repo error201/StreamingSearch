@@ -172,8 +172,8 @@ $ (function(){
             //save button should be on right side of title card, floating.
             var cardSave = $('<button class="save-button wgitaves-effect waves-light btn grey darken-2">');
             //save data from fetch in object array for use in modals and save feature
-            cardSave.text('Add +');
-            card.append(cardSave);
+            // cardSave.text('Add +');
+            // card.append(cardSave);
 
             movieCarousel.append(card);
         }
@@ -205,15 +205,15 @@ $ (function(){
             card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
             
             //title card, needs to appear on bottom
-            var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
+            var cardTitle = $('<div class="card-title left-align ">')
             cardTitle.text(cardObj.title);
             card.append(cardTitle);
 
             //save button should be on right side of title card, floating.
             var cardSave = $('<button class="save-button wgitaves-effect waves-light btn grey darken-2">');
             //save data from fetch in object array for use in modals and save feature
-            cardSave.text('Add +');
-            card.append(cardSave);
+            // cardSave.text('Add +');
+            // card.append(cardSave);
 
             tvCarousel.append(card);
         }
