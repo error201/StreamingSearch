@@ -167,7 +167,7 @@ $ (function(){
             card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
             
             //title card, needs to appear on bottom
-            var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
+            var cardTitle = $('<div class="card-title left-align ">')
             cardTitle.text(cardObj.title);
             card.append(cardTitle);
 
@@ -306,16 +306,17 @@ $ (function(){
     $('.watch-list-title').text('My Watch List');
     //populate watch list with saved titles
     console.log(watchList.length);
-        for (let i = 0; i < watchList.results.length; i++) {
-            var element = watchList.results[i];
-            var watchListCard = $('<div class="card modal-trigger" data-target="description-modal">');
-            watchListCard.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
-            var watchListCardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
-            watchListCardTitle.text(element.title);
-            watchListCard.append(watchListCardTitle);
-            $('.watch-list-main').append(watchListCard);
-            console.log('loop')
-        }
+    for (let i = 0; i < watchList.results.length; i++) {
+        var element = watchList.results[i];
+        var watchListCard = $('<div class="card modal-trigger" data-target="description-modal">');
+        watchListCard.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
+        var watchListCardTitle = $('<div class="card-title left-align ">')
+        watchListCardTitle.text(element.title);
+        watchListCard.append(watchListCardTitle);
+        $('.watch-list-main').append(watchListCard);
+        console.log('loop')
+    }
+
     }
     //Create conditional logic to turn genre codes into appropriate strings
     //Return array of strings
