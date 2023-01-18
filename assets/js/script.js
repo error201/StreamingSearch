@@ -195,6 +195,7 @@ $(function () {
             //create and add title object to array for use in modals and save features
             var cardObj = {
                 title: element.title,
+                id: element.id,
                 genres: element.genre_ids,
                 media: element.media_type,
                 release: element.release_date,
@@ -206,7 +207,7 @@ $(function () {
             onScreenObjects.push(cardObj);
 
             //establish card keys for use in modal and saving
-            var card = $(`<div class="carousel-item card modal-trigger" id="${cardObj.id}" data-target="description-modal">`);
+            var card = $(`<div class="carousel-item card modal-trigger" id="${element.id}" data-target="description-modal">`);
             card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
             
             //title card, needs to appear on bottom
@@ -235,6 +236,7 @@ $(function () {
             //create and add title object to array for use in modals and save features
             var cardObj = {
                 title: element.name,
+                id: element.id,
                 genres: element.genre_ids,
                 media: element.media_type,
                 release: element.first_air_date,
@@ -246,7 +248,7 @@ $(function () {
             onScreenObjects.push(cardObj);
 
             //establish card keys for use in modal and saving
-            var card = $(`<div class="carousel-item card modal-trigger" id="${cardObj.id}" data-target="description-modal">`);
+            var card = $(`<div class="carousel-item card modal-trigger" id="${element.id}" data-target="description-modal">`);
             card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
             
             //title card, needs to appear on bottom
@@ -280,8 +282,7 @@ $(function () {
 
     //Launch modal for title information
     async function titleDetails(element) {
-
-        var openedTitle = onScreenObjects.find(obj => obj.title === element);
+        var openedTitle = onScreenObjects.find(obj => obj.id == element);
         var modalContent = $('.modal-main')
         var modalImage = $('<img>')
         console.log(modalContent)
