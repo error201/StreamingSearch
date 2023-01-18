@@ -33,8 +33,9 @@ $(function () {
     var onScreenObjects = [];
     getTopTenMovie();
     getTopTenTv();
-    var watchList = JSON.parse(localStorage.getItem('watch-list'));
-    
+    var watchList = JSON.parse(localStorage.getItem('watchList'));
+    var vw = Math.round($(window).width()/100);
+    var vh = Math.round($(window).height()/100);
     //Event Listeners---------------------------------------------
     $(document).ready(function () {
         $('.modal').modal();
@@ -48,9 +49,16 @@ $(function () {
     });
 
     $('body').on('click', '.card', function () {
-        console.log($(this).children('.card-title').text());
-        titleDetails($(this).children('.card-title').text());
+        console.log($(this))
+        console.log($(this)[0].id)
+        titleDetails($(this)[0].id);
     });
+
+    $('body').on('click', '.search-card', function(){
+        console.log($(this))
+        console.log($(this)[0].attributes.title)
+        titleDetails($(this)[0].title);
+    })
 
     $('.watch-list-button').on('click', function () {
         launchWatchList();
@@ -58,13 +66,12 @@ $(function () {
 
     $('.carousel').on('click', '.arrow', function (event) {
         event.preventDefault();
-        event.stopPropagagittion();
+        event.stopPropagation();
         moveCarousel($(this));
     });
 
     $('body').on('click', '.save-button', function(){
         updateWatchList($(this).parent().parent().children(".modal-header").children(".modal-title").text());
-        console.log($(this).parent().parent().children(".modal-header").children(".modal-title").text())
     })
 
     
@@ -88,27 +95,40 @@ $(function () {
         })
         .then(function (data) {
             // add cards for search results.
-            var searchResults = data.results.slice(0, 5)
+            console.log(data);
+            var searchResults = data.results
             var cardArea = $("#search-result-cards");
-            for (var [index, item] of searchResults.entries()){
+            for (let i = 0; i < searchResults.length; i++) {
+                const element = searchResults[i];
+
+                var searchObj = {
+                    title: element.title,
+                    id: element.id,
+                    genres: element.genre_ids,
+                    media: element.media_type,
+                    release: element.release_date,
+                    description: element.overview,
+                    popularity: element.vote_average,
+                    poster: element.poster_path,
+                    backdrop: element.backdrop_path
+                }
+                console.log(searchObj)
+                onScreenObjects.push(searchObj);
+
                 var newCardColumn = $('<div class="col s2 m2 l2 search-card-col"></div>')
-                var newSearchCard = $('<div class="card">')
-                var newCardImage = $('<div class="card-image">')
-                var newCardImageSrc = $(`<img src="https://image.tmdb.org/t/p/w500/${item.poster_path}">`)
-                var newCardTitle = $(`<span class="card-title">${item.original_title}</span>`)
-                $(cardArea).append(newCardColumn);
-                $(newCardColumn).append(newSearchCard);
-                $(newSearchCard).append(newCardImage);
-                newSearchCard.attr("data-movie-id", item.id);
-                $(newCardImage).append(newCardImageSrc);
-                $(newCardImage).append(newCardTitle);
+                var newSearchCard = $(`<div class="card modal-trigger" id="${element.id}" data-target="description-modal">`)
+                var newCardImage = $('<div class="search-poster">')
+                var newCardImageSrc = $(`<img class="search-poster" src="https://image.tmdb.org/t/p/w500/${searchObj.poster}">`)
+                cardArea.append(newCardColumn);
+                newCardColumn.append(newSearchCard);
+                newSearchCard.append(newCardImage);
+                newSearchCard.attr("data-movie-id", element.id);
+                //var _tempStyle = newCardImage.attr();
+                newCardImageSrc.attr('style', `max-width: ${vw*20}px; max-height: ${(vw*20*1.33)}px; min-width: ${vw*20}px; min-height: ${(vw*20*1.33)}px`);
+                newCardImage.append(newCardImageSrc);
+                
             }
         });
-    }
-
-    //display search results in rows 4 columns wide
-    function searchResults(array) {
-
     }
 
     // TMDB api fetch function
@@ -119,7 +139,6 @@ $(function () {
                 return response.json();
             })
             .then(function (data) {
-                console.log(data.results)
                 populateCarouselTV(data.results);
                 $(document).ready(function(){
                     $('#tv-carousel').carousel({
@@ -151,7 +170,6 @@ $(function () {
 
     // Youtube api fetch function
     async function getYoutubeTrailers(searchKeyword) {
-        // console.log(searchKeyword);
         // var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}%previewpart=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
         
         // var test = await fetch(youTubeApiUrl)
@@ -159,8 +177,6 @@ $(function () {
         //         return response.json();
         //     })
         //     .then(function (data) {
-        //         console.log(data);
-        //         console.log(data.items[0].id.videoId);
         //         return data.items[0].id.videoId;
         //     });
         // return test;
@@ -190,7 +206,7 @@ $(function () {
             onScreenObjects.push(cardObj);
 
             //establish card keys for use in modal and saving
-            var card = $('<div class="carousel-item card modal-trigger" data-target="description-modal">');
+            var card = $(`<div class="carousel-item card modal-trigger" id="${cardObj.id}" data-target="description-modal">`);
             card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
             
             //title card, needs to appear on bottom
@@ -230,7 +246,7 @@ $(function () {
             onScreenObjects.push(cardObj);
 
             //establish card keys for use in modal and saving
-            var card = $('<div class="carousel-item card modal-trigger" data-target="description-modal">');
+            var card = $(`<div class="carousel-item card modal-trigger" id="${cardObj.id}" data-target="description-modal">`);
             card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
             
             //title card, needs to appear on bottom
@@ -253,17 +269,18 @@ $(function () {
         if(element.hasClass('movie-next')){
             $('#movie-carousel').carousel('next');
         } else if(element.hasClass('movie-previous')){
-            $('#movie-carousel').carousel('next');
+            $('#movie-carousel').carousel('prev');
         }
         if(element.hasClass('tv-next')){
             $('#tv-carousel').carousel('next');
         } else if(element.hasClass('tv-previous')){
-            $('#tv-carousel').carousel('next');
+            $('#tv-carousel').carousel('prev');
         }
     }
 
     //Launch modal for title information
     async function titleDetails(element) {
+
         var openedTitle = onScreenObjects.find(obj => obj.title === element);
         var modalContent = $('.modal-main')
         var modalImage = $('<img>')
@@ -290,7 +307,6 @@ $(function () {
         }
         var youTubeUrl = 'https://www.youtube.com/embed/' + await getUrl();
         var streamingServices = await getProviders();
-        console.log(streamingServices);
         streamingMethod = streamingServices.splice(0,1);
 
         //fill modal contents
@@ -344,21 +360,21 @@ $(function () {
     //open watch list modal
     function launchWatchList() {
     //eventually make this input for user to give name and create multiple watch lists
+    var watchListItems = $('.watch-list-card')
+    watchListItems.remove();
     $('.watch-list-title').text('My Watch List');
     if(watchList === null) {
         watchList = [];
     }
     //populate watch list with saved titles
-    console.log(watchList);
     for (let i = 0; i < watchList.length; i++) {
         var element = watchList[i];
-        var watchListCard = $('<div class="card modal-trigger" data-target="description-modal">');
+        var watchListCard = $('<div class="watch-list-card card modal-trigger" data-target="description-modal">');
         watchListCard.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop})`);
         var watchListCardTitle = $('<div class="card-title left-align ">')
         watchListCardTitle.text(element.title);
         watchListCard.append(watchListCardTitle);
         $('.watch-list-main').append(watchListCard);
-        console.log('loop')
     }
     
     }
@@ -366,7 +382,6 @@ $(function () {
     //Return array of strings
     //
     function getGenre(array) {
-        console.log(array)
         var genreList = [];
         for (let i = 0; i < array.length; i++) {
             const element = array[i];
@@ -464,7 +479,6 @@ $(function () {
         var id = element;
         var media = type;
         var providers = [];
-        console.log(id);
         if(media === 'movie'){
             var streamRequest = `https://api.themoviedb.org/3/movie/${id}/watch/providers?api_key=${tmdbApiKey}`
             var movieProvidersArr = [];
@@ -474,7 +488,6 @@ $(function () {
                     return response.json();
                 })
                 .then(function (data) {
-                    console.log(data);
                     if(data.results.US != undefined){
                         if(data.results.US.rent != undefined){
                             movieProvidersArr = data.results.US.rent;
@@ -503,7 +516,6 @@ $(function () {
                     } else {
                         providers.push('No streaming services found. Sorry.');
                     }
-                    console.log(providers)
                 });
         } else if(media === 'tv'){
             var streamRequest = `https://api.themoviedb.org/3/tv/${id}/watch/providers?api_key=${tmdbApiKey}`
@@ -515,7 +527,6 @@ $(function () {
                     return response.json();
                 })
                 .then(function (data) {
-                    console.log(data);
                     if(data.results.US != undefined){
                         tvProvidersArr = data.results.US.flatrate;
                         for (let i = 0; i < tvProvidersArr.length; i++) {
@@ -526,7 +537,6 @@ $(function () {
                     } else {
                         providers.push('No streaming services found. Sorry.');
                     }
-                    console.log(providers)
                 });
             }
         return providers;
