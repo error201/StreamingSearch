@@ -29,8 +29,6 @@ h4 {
     background: linear-gradient(0deg, #00000088 30%, #ffffff44 100%);
 }
 
-
-
 .card {
     min-width: 16em;
     min-height: 8.9em;
@@ -39,6 +37,9 @@ h4 {
     background-size: contain;
     display: flex;
     align-items: flex-end;
+}
+
+.search-poster {
 }
 
 .arrow {
