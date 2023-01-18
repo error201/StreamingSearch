@@ -109,7 +109,6 @@ $ (function(){
                 return response.json();
             })
             .then(function (data) {
-                console.log(data.results);
                 populateCarouselMovie(data.results);
                 $(document).ready(function(){
                     $('#movie-carousel').carousel({
@@ -151,7 +150,6 @@ $ (function(){
             //create and add title object to array for use in modals and save features
             var cardObj = {
                 title: element.title,
-                id: element.id,
                 genres: element.genre_ids,
                 media: element.media_type,
                 release: element.release_date,
@@ -192,7 +190,6 @@ $ (function(){
             //create and add title object to array for use in modals and save features
             var cardObj = {
                 title: element.name,
-                id: element.id,
                 genres: element.genre_ids,
                 media: element.media_type,
                 release: element.first_air_date,
@@ -239,7 +236,8 @@ $ (function(){
     async function titleDetails(element) {
         var openedTitle = onScreenObjects.find(obj => obj.title === element);
         var genre = getGenre(openedTitle.genres);
-        console.log(genre);
+        console.log(genre)
+        var streamingServices = getStreamingService(openedTitle.title);
         //getting the trailer into modal using async functions.
         //can propably be written better but it works so were keeping it as is for now.
         async function getUrl(){
@@ -248,19 +246,11 @@ $ (function(){
             })
             return returnedUrl;
         }
-        async function getProviders(){
-            returnedProviders = await getStreamingService(openedTitle.id, openedTitle.media).then(prov => {
-                return prov;
-            })
-            return returnedProviders;
-        }
-        var youTubeUrl = 'https://www.youtube.com/embed/' + await getUrl();
-        var streamingServices = await getProviders();
-        console.log(streamingServices);
+        youTubeUrl = 'https://www.youtube.com/embed/' + await getUrl();
         
         //fill modal contents
         $('.modal-title').text(openedTitle.title);
-        $('.modal-info').text(openedTitle.release + '  ' + genre + '  ' + (Math.round(openedTitle.popularity * 10) + '%'));
+        $('.modal-info').text(openedTitle.release + ' ' + genre + ' ' + (Math.round(openedTitle.popularity * 10) + '%'));
         $('.modal-description').text(openedTitle.description);
         $('.modal-trailer').attr('src', `${youTubeUrl}`);
         $('.modal-services').text(streamingServices);
@@ -316,7 +306,7 @@ $ (function(){
         $('.watch-list-main').append(watchListCard);
         console.log('loop')
     }
-
+    
     }
     //Create conditional logic to turn genre codes into appropriate strings
     //Return array of strings
@@ -415,56 +405,8 @@ $ (function(){
         return genreList;
     }
 
-    async function getStreamingService(element, type) {
-        var id = element;
-        var media = type;
-        var providers = [];
-        console.log(id);
-        if(media === 'movie'){
-            var streamRequest = `https://api.themoviedb.org/3/movie/${id}/watch/providers?api_key=${tmdbApiKey}`
-            var movieProvidersArr = [];
-
-            await fetch(streamRequest)
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (data) {
-                    console.log(data);
-                    if(data.results.US != undefined){
-                        movieProvidersArr = data.results.US.rent;
-                        for (let i = 0; i < movieProvidersArr.length; i++) {
-                            const element = movieProvidersArr[i];
-                            providers.push(element.provider_name);
-                        }
-                    } else {
-                        providers.push('No streaming services found. Sorry.');
-                    }
-                    console.log(providers)
-                });
-        } else if(media === 'tv'){
-            var streamRequest = `https://api.themoviedb.org/3/tv/${id}/watch/providers?api_key=${tmdbApiKey}`
-            var tvProvidersArr = [];
-            var providers = [];
-
-            await fetch(streamRequest)
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (data) {
-                    console.log(data);
-                    if(data.results.US != undefined){
-                        tvProvidersArr = data.results.US.flatrate;
-                        for (let i = 0; i < tvProvidersArr.length; i++) {
-                            const element = tvProvidersArr[i];
-                            providers.push(element.provider_name);
-                        }
-                    } else {
-                        providers.push('No streaming services found. Sorry.');
-                    }
-                    console.log(providers)
-                });
-            }
-        return providers;
+    function getStreamingService() {
+    
     }
 
 });
