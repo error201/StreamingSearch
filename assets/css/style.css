@@ -122,8 +122,10 @@ footer {
 
 
 .modal-description {
-    font-size: 140%;
+    font-size: 150%;
     font-family: Arial, Helvetica, sans-serif;
+    padding-left: 5rem;
+    padding-right: 5rem;
 }
 
 .modal-info {
@@ -134,6 +136,10 @@ footer {
 .modal-title {
     font-weight: bold;
     font-size: 500%;
+}
+
+.modal-footer {
+    margin-top: 21rem;
 }
 /* 
 .modal-save button {
