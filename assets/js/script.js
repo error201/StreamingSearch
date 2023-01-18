@@ -239,6 +239,7 @@ $ (function(){
     async function titleDetails(element) {
         var openedTitle = onScreenObjects.find(obj => obj.title === element);
         var genre = getGenre(openedTitle.genres).join(', ');
+
         //getting the trailer into modal using async functions.
         //can propably be written better but it works so were keeping it as is for now.
         async function getUrl(){
@@ -256,13 +257,14 @@ $ (function(){
         var youTubeUrl = 'https://www.youtube.com/embed/' + await getUrl();
         var streamingServices = await getProviders();
         console.log(streamingServices);
-        
+        streamingMethod = streamingServices.splice(0,1);
         //fill modal contents
         $('.modal-title').text(openedTitle.title);
         $('.modal-info').text(openedTitle.release + ' ' + genre + ' ' + (Math.round(openedTitle.popularity * 10) + '%'));
         $('.modal-description').text(openedTitle.description);
         $('.modal-trailer').attr('src', `${youTubeUrl}`);
         $('.modal-services').text(streamingServices.join(', '));
+
         $('.modal-save').text('Add +');
 
     }
@@ -433,10 +435,29 @@ $ (function(){
                 .then(function (data) {
                     console.log(data);
                     if(data.results.US != undefined){
-                        movieProvidersArr = data.results.US.rent;
-                        for (let i = 0; i < movieProvidersArr.length; i++) {
-                            const element = movieProvidersArr[i];
-                            providers.push(element.provider_name);
+                        if(data.results.US.rent != undefined){
+                            movieProvidersArr = data.results.US.rent;
+                            for (let i = 0; i < movieProvidersArr.length; i++) {
+                                const element = movieProvidersArr[i];
+                                providers.push(element.provider_name);
+                            }
+                            providers.unshift('Rent: ')
+                        } else if(data.results.US.flatrate != undefined) {
+                            movieProvidersArr = data.results.US.flatrate;
+                            for (let i = 0; i < movieProvidersArr.length; i++) {
+                                const element = movieProvidersArr[i];
+                                providers.push(element.provider_name);
+                            }
+                            providers.unshift('Flatrate: ')
+                        } else if (data.results.US.buy != undefined){
+                            movieProvidersArr = data.results.US.buy;
+                            for (let i = 0; i < movieProvidersArr.length; i++) {
+                                const element = movieProvidersArr[i];
+                                providers.push(element.provider_name);
+                            }
+                            providers.unshift('Buy: ')
+                        } else {
+                            providers.push('No streaming services found. Sorry.');
                         }
                     } else {
                         providers.push('No streaming services found. Sorry.');
@@ -460,6 +481,7 @@ $ (function(){
                             const element = tvProvidersArr[i];
                             providers.push(element.provider_name);
                         }
+                        providers.unshift('Flatrate: ')
                     } else {
                         providers.push('No streaming services found. Sorry.');
                     }
