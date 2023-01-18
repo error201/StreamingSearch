@@ -170,17 +170,16 @@ $(function () {
 
     // Youtube api fetch function
     async function getYoutubeTrailers(searchKeyword) {
-        // var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}%previewpart=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
+        var youTubeApiUrl = `https://www.googleapis.com/youtube/v3/search?q=${searchKeyword}%previewpart=snippet&order=relevance&type=video&videoDefinition=high&key=${youTubeApiKey}`;
         
-        // var test = await fetch(youTubeApiUrl)
-        //     .then(function (response) {
-        //         return response.json();
-        //     })
-        //     .then(function (data) {
-        //         return data.items[0].id.videoId;
-        //     });
-        // return test;
-        return '-XwSmZ5n_J4';
+        var test = await fetch(youTubeApiUrl)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                return data.items[0].id.videoId;
+            });
+        return test;
     };
 
     //place carousel card items in carousel
