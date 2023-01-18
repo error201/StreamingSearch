@@ -21,7 +21,7 @@
 //a. location of watch-list button needs to be determined.
 
 
-$ (function(){
+$(function () {
     //Global Variables---------------------------------------------
     var pageEl = $('body');
     var tmdbApiKey = "241112bdd32fa526246d8de7ad741118";
@@ -33,6 +33,15 @@ $ (function(){
     getTopTenMovie();
     getTopTenTv();
     var topTenMovies = JSON.parse(localStorage.getItem('topTenMovies'));
+
+    var watchList = JSON.parse(localStorage.getItem('watch-list'));
+    console.log(watchList);
+    populateCarousel(topTenMovies);
+    var watchList = JSON.parse(localStorage.getItem('watchList'));
+
+
+
+
     var topTenTV = JSON.parse(localStorage.getItem('topTenTV'));
     var watchList = JSON.parse(localStorage.getItem('watch-list'));
     var watchList = JSON.parse(localStorage.getItem('watchList'));     
@@ -42,21 +51,33 @@ $ (function(){
 
     
     //Event Listeners---------------------------------------------
-    $(document).ready(function(){
+    $(document).ready(function () {
         //need to come to agreement on carousel functionality
+        $('.carousel').carousel({
+            padding: 10,
+            dist: 0,
+            fullWidth: true
+        });
         $('.modal').modal();
     });
+
     //updated eventlistener to listen for any decendent of body that was a card to resolve the issue that the watch list cards weren't present at the time of onload
-    $('body').on('click', '.card', function(){
+    $("#search-button").on("click", function(event){
+        event.preventDefault();
+        var searchedText = $(searchTextEl).val();
+        getUserQuery(searchedText);
+    });
+
+    $('body').on('click', '.card', function () {
         console.log($(this).children('.card-title').text());
         titleDetails($(this).children('.card-title').text());
     });
 
-    $('.watch-list-button').on('click', function(){
+    $('.watch-list-button').on('click', function () {
         launchWatchList();
     });
 
-    $('.carousel').on('click', '.arrow', function(event){
+    $('.carousel').on('click', '.arrow', function (event) {
         event.preventDefault();
         event.stopPropagation();
         moveCarousel($(this));
@@ -69,20 +90,49 @@ $ (function(){
 
     
     //Functions----------------------------------------------------
-    
+
     //streaming availability api fetch function
     //add seach limit protection so we dont go over 50 per day
     //API Key: 95154b8a57msha4e5c1348b5f178p1d6f1ejsn62dcb59bc28f
-    function getUserQuery(input) {
-    
+    function getUserQuery(searchedText) {
+        // If there are already cards here, get rid of them.
+        var existingCardEls = $('.search-card-col');
+        if (existingCardEls){
+            $(existingCardEls).remove();
+        };
+        // Fetch the results!
+        var uriEncodedText = encodeURI(searchedText);
+        var searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${tmdbApiKey}&language=en-US&page=1&include_adult=false&query=${uriEncodedText}`;
+        fetch(searchUrl)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            // add cards for search results.
+            var searchResults = data.results.slice(0, 5)
+            var cardArea = $("#search-result-cards");
+            for (var [index, item] of searchResults.entries()){
+                var newCardColumn = $('<div class="col s2 m2 l2 search-card-col"></div>')
+                var newSearchCard = $('<div class="card">')
+                var newCardImage = $('<div class="card-image">')
+                var newCardImageSrc = $(`<img src="https://image.tmdb.org/t/p/w500/${item.poster_path}">`)
+                var newCardTitle = $(`<span class="card-title">${item.original_title}</span>`)
+                $(cardArea).append(newCardColumn);
+                $(newCardColumn).append(newSearchCard);
+                $(newSearchCard).append(newCardImage);
+                newSearchCard.attr("data-movie-id", item.id);
+                $(newCardImage).append(newCardImageSrc);
+                $(newCardImage).append(newCardTitle);
+            }
+        });
     }
-    
+
     //display search results in rows 4 columns wide
     function searchResults(array) {
-    
+
     }
-    
-    //TMDB api fetch function
+
+    // TMDB api fetch function
     function getTopTenTv() {
         var trendingTvUrl = `https://api.themoviedb.org/3/trending/tv/week?api_key=${tmdbApiKey}`
         fetch(trendingTvUrl)
@@ -101,7 +151,7 @@ $ (function(){
                 });
             });
     };
-    
+
     function getTopTenMovie() {
         var trendingMovieUrl = `https://api.themoviedb.org/3/trending/movie/week?api_key=${tmdbApiKey}`
         return fetch(trendingMovieUrl)
@@ -120,7 +170,7 @@ $ (function(){
                 });
             });
     };
-    
+
     // Youtube api fetch function
     async function getYoutubeTrailers(searchKeyword) {
         // console.log(searchKeyword);
@@ -138,7 +188,7 @@ $ (function(){
         // return test;
         return '-XwSmZ5n_J4';
     };
-    
+
     //place carousel card items in carousel
     function populateCarouselMovie(array) {
         //cut results down to the 10 top rated movies
@@ -176,49 +226,7 @@ $ (function(){
             //save data from fetch in object array for use in modals and save feature
             cardSave.text('Add +');
             card.append(cardSave);
-
             movieCarousel.append(card);
-        }
-    }
-
-    function populateCarouselTV(array) {
-        //cut results down to the 10 top rated movies
-        var results = array;
-        results.sort(function(a, b){return b.popularity - a.popularity});
-        var topRated = results.slice(0, 10);
-    
-        for (let i = 0; i < topRated.length; i++) {
-            var element = topRated[i];
-            //create and add title object to array for use in modals and save features
-            var cardObj = {
-                title: element.name,
-                id: element.id,
-                genres: element.genre_ids,
-                media: element.media_type,
-                release: element.first_air_date,
-                description: element.overview,
-                popularity: element.vote_average,
-                poster: element.poster_path,
-                backdrop: element.backdrop_path
-            }
-            onScreenObjects.push(cardObj);
-
-            //establish card keys for use in modal and saving
-            var card = $('<div class="carousel-item card modal-trigger" data-target="description-modal">');
-            card.attr("style", `background-image: url(https://image.tmdb.org/t/p/w500/${element.backdrop_path})`);
-            
-            //title card, needs to appear on bottom
-            var cardTitle = $('<div class="card-title left-align grey darken-2 text-grey text-darken-4">')
-            cardTitle.text(cardObj.title);
-            card.append(cardTitle);
-
-            //save button should be on right side of title card, floating.
-            var cardSave = $('<button class="save-button wgitaves-effect waves-light btn grey darken-2">');
-            //save data from fetch in object array for use in modals and save feature
-            cardSave.text('Add +');
-            card.append(cardSave);
-
-            tvCarousel.append(card);
         }
     }
     
@@ -268,7 +276,7 @@ $ (function(){
         $('.modal-save').text('Add +');
 
     }
-    
+
     //save button function
     function updateWatchList(element) {
         var savedTitle = onScreenObjects.find(obj => obj.title === element);
@@ -495,4 +503,3 @@ $ (function(){
 
 
 
-    
