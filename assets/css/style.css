@@ -33,9 +33,14 @@ h4 {
 
 .card-title {
     display: flex;
-    justify-content:flex-end;
+    justify-content:center;
+    align-items:flex-end;
+    margin-bottom: 5px;
 }
 
+.card-title h {
+    font-size: 50%;
+}
 
 .card {
     min-width: 16em;
@@ -115,3 +120,24 @@ footer {
     display: flex;
     align-items: flex-end;
 }
+
+
+.modal-description {
+    font-size: 150%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.modal-info {
+    font-size: 120%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.modal-title {
+    font-weight: bold;
+    font-size: 500%;
+}
+/* 
+.modal-save button {
+    display: flex;
+    justify-self: right;
+} */

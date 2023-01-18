@@ -260,7 +260,7 @@ $ (function(){
         
         //fill modal contents
         $('.modal-title').text(openedTitle.title);
-        $('.modal-info').text(openedTitle.release + ' ' + genre + ' ' + (Math.round(openedTitle.popularity * 10) + '%'));
+        $('.modal-info').text(openedTitle.release + '  ' + genre + '  ' + (Math.round(openedTitle.popularity * 10) + '%'));
         $('.modal-description').text(openedTitle.description);
         $('.modal-trailer').attr('src', `${youTubeUrl}`);
         $('.modal-services').text(streamingServices);
